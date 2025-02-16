@@ -1,4 +1,5 @@
-﻿using OrderReportCreator.Exceptions;
+﻿using System.Text;
+using OrderReportCreator.Exceptions;
 using OrderReportCreator.Requests;
 
 namespace OrderReportCreator.Presentation;
@@ -17,13 +18,14 @@ public class UI: IUI
     
     private string GetReportFormat()
     {
+        Console.InputEncoding = Encoding.UTF8;
         using var streamReader = new StreamReader(Console.OpenStandardInput());
-        using var streamWriter = new StreamWriter(Console.OpenStandardOutput());
-        streamWriter.WriteLine("Введите формат отчёта.\n" +
-                               "Если вы хотите, чтобы отчёт был выведен в консоль - введите  \"console\".\n" +
-                               "Если вы хотите, чтобы отчёт был сохранён в файл - введите  \"file\".\n");
+        WriteConsole("Введите формат отчёта.\n" +
+                     "Если вы хотите, чтобы отчёт был выведен в консоль - введите  \"console\".\n" +
+                     "Если вы хотите, чтобы отчёт был сохранён в файл - введите  \"file\".");
         var reportFormat = streamReader.ReadLine();
-        if (reportFormat != "console" || reportFormat != "file")
+        Console.WriteLine();
+        if (reportFormat != "console" && reportFormat != "file")
         {
             throw new IncorrectReportFormatException(reportFormat);
         }
@@ -32,10 +34,11 @@ public class UI: IUI
 
     private List<long> GetClientIds()
     {
+        Console.InputEncoding = Encoding.UTF8;
         using var streamReader = new StreamReader(Console.OpenStandardInput());
-        using var streamWriter = new StreamWriter(Console.OpenStandardOutput());
-        streamWriter.WriteLine("Введите через пробел уникальные id клиентов для составления отчета:");
+        WriteConsole("Введите через пробел уникальные id клиентов для составления отчета:");
         var clientIdsStr = streamReader.ReadLine();
+        Console.WriteLine();
         if (string.IsNullOrWhiteSpace(clientIdsStr))
         {
             throw new EmptyClientIdListException();
@@ -49,5 +52,13 @@ public class UI: IUI
             })
             .ToList();
         return clientIdsToRequest;
+    }
+
+    private void WriteConsole(string message)
+    {
+        Console.OutputEncoding = Encoding.UTF8;
+        using var streamWriter = new StreamWriter(Console.OpenStandardOutput());
+        streamWriter.WriteLine(message);
+        streamWriter.Flush();
     }
 }
