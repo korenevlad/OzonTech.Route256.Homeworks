@@ -4,5 +4,5 @@ using OrderReportCreator.Requests;
 namespace OrderReportCreator.Application;
 public interface IOrderReportService
 {
-    public IEnumerable<Report> CreateOrderReport(Request request);
+    public IEnumerable<ReportItem> CreateOrderReport(Request request);
 }
