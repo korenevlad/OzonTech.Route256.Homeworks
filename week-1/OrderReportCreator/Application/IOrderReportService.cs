@@ -1,7 +1,8 @@
 ﻿using OrderReportCreator.Domain.Models;
+using OrderReportCreator.Requests;
 
-namespace OrderReportCreator.Application.Commands;
+namespace OrderReportCreator.Application;
 public interface IOrderReportService
 {
-    IEnumerable<Report> CreateOrderReports();
+    public IEnumerable<Report> CreateOrderReport(Request request);
 }

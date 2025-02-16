@@ -1,16 +1,27 @@
 ﻿using OrderReportCreator.Domain.Models;
+using OrderReportCreator.Exceptions;
+using OrderReportCreator.Requests;
 
-namespace OrderReportCreator.Application.Commands;
+namespace OrderReportCreator.Application;
 public class OrderReportService: IOrderReportService
 {
-    private readonly IClientRepository _clientRepository;
-    public OrderReportService(IClientRepository clientRepository)
+    private readonly IOrderRepository _orderRepository;
+    public OrderReportService(IOrderRepository orderRepository)
     {
-        _clientRepository = clientRepository;
+        _orderRepository = orderRepository;
     }
-    
-    public IEnumerable<Report> CreateOrderReports()
+    public IEnumerable<Report> CreateOrderReport(Request request)
     {
-        throw new NotImplementedException();
+        foreach (var clientId in request.Ids.ToList())
+        {
+            if (!_orderRepository.TryGetByClientId(clientId))
+            {
+                throw new GetClientIdException(clientId);
+            }
+            
+            
+        }
+        
+        return new List<Report>();
     }
 }

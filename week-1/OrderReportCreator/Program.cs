@@ -1,14 +1,18 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using OrderReportCreator.Application.Commands;
+using OrderReportCreator.Application;
 using OrderReportCreator.Application.Repositories;
+using OrderReportCreator.Application.Senders;
 using OrderReportCreator.Domain.Models;
 using OrderReportCreator.Presentation;
+using OrderReportCreator.Services;
 
 var serviceProvider = new ServiceCollection()
-    .AddScoped<IClientRepository, ClientRepository>()
+    .AddScoped<IOrderRepository, OrderRepositoryCsv>()
+    .AddScoped<IReportSender, ConsoleReportSender>()
+    .AddScoped<IReportSender, FileReportSender>()
     .AddScoped<IOrderReportService, OrderReportService>()
     .AddScoped<IUI, UI>()
-    
+    .AddScoped<IOrderReportManager, OrderReportManager>()
     .BuildServiceProvider();
-var orderReportService = serviceProvider.GetRequiredService<IOrderReportService>();
-orderReportService.CreateOrderReports();
+var orderReportManager = serviceProvider.GetRequiredService<IOrderReportManager>();
+orderReportManager.GenerateOrderReport();

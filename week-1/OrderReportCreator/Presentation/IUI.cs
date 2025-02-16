@@ -4,5 +4,5 @@ namespace OrderReportCreator.Presentation;
 
 public interface IUI
 {
-    public Request GetRequest();
+    Request GetRequest();
 }

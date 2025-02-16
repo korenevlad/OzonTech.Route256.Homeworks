@@ -1,4 +1,4 @@
-﻿namespace OrderReportCreator.Domain.Models;
+﻿namespace OrderReportCreator.Domain.Models.ClientAggregate;
 
 public class Client
 {
