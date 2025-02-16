@@ -1,6 +1,6 @@
 ﻿namespace OrderReportCreator.Domain.Models;
 
-public class Report
+public class ReportItem
 {
     public long ClientId { get; init; }
     private float _orderSum;
