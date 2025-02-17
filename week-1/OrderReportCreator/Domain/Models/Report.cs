@@ -2,5 +2,5 @@
 
 public class Report
 {
-    public List<ReportRow> Rows { get; init; } = new();
+    public List<ReportRow> Rows { get; set; } = new();
 }

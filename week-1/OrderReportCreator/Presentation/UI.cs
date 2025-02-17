@@ -31,7 +31,7 @@ public class UI: IUI
         return reportFormat;
     }
 
-    private IEnumerable<long> GetClientIds()
+    private List<long> GetClientIds()
     {
         SendMessage("Введите через пробел уникальные id клиентов для составления отчета:");
         Console.InputEncoding = Encoding.UTF8;

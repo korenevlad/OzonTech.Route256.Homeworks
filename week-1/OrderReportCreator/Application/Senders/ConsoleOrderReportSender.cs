@@ -1,7 +1,7 @@
 ﻿using OrderReportCreator.Domain.Models;
 
 namespace OrderReportCreator.Application.Senders;
-public class ConsoleReportSender: IReportSender
+public class ConsoleOrderReportSender: IOrderReportSender
 {
     public bool CanSendReport(ResponseFormat responseFormat) 
         => responseFormat == ResponseFormat.Console;
