@@ -1,13 +1,13 @@
 ﻿namespace OrderReportCreator.Domain.Models;
 
-public class ReportItem
+public class ReportRow
 {
-    public long ClientId { get; init; }
+    public long ClientId { get; set; }
     private float _orderSum;
     public float OrderSum
     {
         get => (float)Math.Round(_orderSum, 2);
-        init => _orderSum = value;
+        set => _orderSum = value;
     }
-    public string FavoriteItemName { get; init; }
+    public string FavoriteItemName { get; set; }
 }

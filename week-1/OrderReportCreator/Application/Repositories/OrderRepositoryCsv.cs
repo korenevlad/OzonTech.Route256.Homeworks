@@ -1,12 +1,13 @@
 ﻿using System.Globalization;
 using CsvHelper;
 using OrderReportCreator.Domain.Models;
+using OrderReportCreator.Domain.Models.OrderAggregate;
 
 namespace OrderReportCreator.Application.Repositories;
 public class OrderRepositoryCsv: IOrderRepository
 {
-    private const string csvFilePath = @"..\..\..\..\orders_log.csv";
-    public bool TryGetByClientId(long id)
+    private const string CsvFilePath = @"..\..\..\..\orders_log.csv";
+    public bool TryFindByClientId(long id)
     {
         var orders = GetOrders();
         var isExistClient = orders.FirstOrDefault(r => r.Client.Id == id);
@@ -39,7 +40,7 @@ public class OrderRepositoryCsv: IOrderRepository
 
     private List<Order> GetOrders()
     {
-        using (var reader = new StreamReader(csvFilePath))
+        using (var reader = new StreamReader(CsvFilePath))
         using (var csv = new CsvReader(reader, CultureInfo.InvariantCulture))
         {
             csv.Context.RegisterClassMap<OrderMapCsv>();

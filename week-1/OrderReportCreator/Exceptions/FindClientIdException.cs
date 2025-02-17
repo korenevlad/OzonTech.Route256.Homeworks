@@ -1,9 +1,9 @@
 ﻿namespace OrderReportCreator.Exceptions;
 
-public class GetClientIdException : BusinessException
+public class FindClientIdException : BusinessException
 {
-    private long InvalidClientId;
-    public GetClientIdException(long invalidClientId)
+    private readonly long InvalidClientId;
+    public FindClientIdException(long invalidClientId)
     {
         InvalidClientId = invalidClientId;
     }

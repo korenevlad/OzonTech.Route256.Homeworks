@@ -1,6 +1,6 @@
 ﻿using OrderReportCreator.Domain.Models;
+using OrderReportCreator.Domain.Models.OrderAggregate;
 using OrderReportCreator.Exceptions;
-using OrderReportCreator.Requests;
 
 namespace OrderReportCreator.Application;
 public class OrderReportService: IOrderReportService
@@ -10,18 +10,18 @@ public class OrderReportService: IOrderReportService
     {
         _orderRepository = orderRepository;
     }
-    public IEnumerable<ReportItem> CreateOrderReport(Request request)
+    public Report CreateOrderReport(IEnumerable<long> ids)
     {
-        var report = new List<ReportItem>();
-        foreach (var clientId in request.Ids.ToList())
+        var report = new Report();
+        foreach (var clientId in ids.ToList())
         {
-            if (!_orderRepository.TryGetByClientId(clientId))
+            if (!_orderRepository.TryFindByClientId(clientId))
             {
-                throw new GetClientIdException(clientId);
+                throw new FindClientIdException(clientId);
             }
             var favoriteItemName = _orderRepository.GetFavoriteItemNameByClientId(clientId);
             var orderSum = _orderRepository.GetOrderSumByClientId(clientId);
-            report.Add(new ReportItem
+            report.Rows.Add(new ReportRow
             {
                 ClientId = clientId,
                 OrderSum = orderSum,

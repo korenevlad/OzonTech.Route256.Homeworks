@@ -1,7 +1,9 @@
-﻿namespace OrderReportCreator.Application.Senders;
+﻿using OrderReportCreator.Domain.Models;
+
+namespace OrderReportCreator.Application.Senders;
 
 public interface IReportSender
 {
-    bool CanSend(ResponseFormat responseFormat);
-    void Send();
+    bool CanSendReport(ResponseFormat responseFormat);
+    string SendReport(Report report);
 }

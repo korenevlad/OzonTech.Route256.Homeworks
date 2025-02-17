@@ -2,7 +2,7 @@
 
 public class ClientIdConversionException: BusinessException
 {
-    private string InvalidClientId;
+    private readonly string InvalidClientId;
     public ClientIdConversionException(string invalidClientId)
     {
         InvalidClientId = invalidClientId;
