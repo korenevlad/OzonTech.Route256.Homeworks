@@ -1,8 +1,8 @@
-﻿namespace OrderReportCreator.Domain.Models;
+﻿namespace OrderReportCreator.Domain.Models.OrderAggregate;
 
 public interface IOrderRepository
 {
-    bool TryGetByClientId(long id);
+    bool TryFindByClientId(long id);
     string GetFavoriteItemNameByClientId(long id);
     float GetOrderSumByClientId(long id);
 }

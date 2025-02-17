@@ -2,7 +2,7 @@
 
 public class IncorrectReportFormatException: BusinessException
 {
-    private string InvalidString;
+    private readonly string InvalidString;
     public IncorrectReportFormatException(string invalidString)
     {
         InvalidString = invalidString;

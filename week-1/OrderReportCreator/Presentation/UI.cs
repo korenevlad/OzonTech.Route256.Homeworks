@@ -5,11 +5,11 @@ using OrderReportCreator.Requests;
 namespace OrderReportCreator.Presentation;
 public class UI: IUI
 {
-    public Request GetRequest()
+    public GenerateOrderReportRequest GetRequest()
     {
         var reportFormat = GetReportFormat();
         var clientIds = GetClientIds();
-        return new Request()
+        return new GenerateOrderReportRequest()
         {
             ResponseFormat = reportFormat == "console" ? ResponseFormat.Console : ResponseFormat.File,  
             Ids = clientIds 
@@ -18,13 +18,12 @@ public class UI: IUI
     
     private string GetReportFormat()
     {
+        SendMessage("Введите формат отчёта. " +
+                     "Если вы хотите, чтобы отчёт был выведен в консоль - введите  \"console\". " +
+                     "Если вы хотите, чтобы отчёт был сохранён в файл - введите  \"file\".");
         Console.InputEncoding = Encoding.UTF8;
         using var streamReader = new StreamReader(Console.OpenStandardInput());
-        WriteConsole("Введите формат отчёта.\n" +
-                     "Если вы хотите, чтобы отчёт был выведен в консоль - введите  \"console\".\n" +
-                     "Если вы хотите, чтобы отчёт был сохранён в файл - введите  \"file\".");
         var reportFormat = streamReader.ReadLine();
-        Console.WriteLine();
         if (reportFormat != "console" && reportFormat != "file")
         {
             throw new IncorrectReportFormatException(reportFormat);
@@ -32,13 +31,12 @@ public class UI: IUI
         return reportFormat;
     }
 
-    private List<long> GetClientIds()
+    private IEnumerable<long> GetClientIds()
     {
+        SendMessage("Введите через пробел уникальные id клиентов для составления отчета:");
         Console.InputEncoding = Encoding.UTF8;
         using var streamReader = new StreamReader(Console.OpenStandardInput());
-        WriteConsole("Введите через пробел уникальные id клиентов для составления отчета:");
         var clientIdsStr = streamReader.ReadLine();
-        Console.WriteLine();
         if (string.IsNullOrWhiteSpace(clientIdsStr))
         {
             throw new EmptyClientIdListException();
@@ -54,7 +52,7 @@ public class UI: IUI
         return clientIdsToRequest;
     }
 
-    private void WriteConsole(string message)
+    public void SendMessage(string message)
     {
         Console.OutputEncoding = Encoding.UTF8;
         using var streamWriter = new StreamWriter(Console.OpenStandardOutput());
