@@ -2,11 +2,11 @@
 
 public class Item
 {
-    public string Name { get; set; }
+    public string Name { get; init; }
     private float _price;
     public float Price
     {
         get => (float)Math.Round(_price, 2);
-        set => _price = value;
+        init => _price = value;
     }
 }

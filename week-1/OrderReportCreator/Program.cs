@@ -9,9 +9,9 @@ using OrderReportCreator.Services;
 var serviceProvider = new ServiceCollection()
     .AddScoped<IOrderRepository, OrderRepositoryCsv>()
     .AddScoped<IOrderReportService, OrderReportService>()
-    .AddScoped<IReportSenderFactory, ReportSenderFactory>()
-    .AddScoped<IReportSender, ConsoleReportSender>()
-    .AddScoped<IReportSender, FileReportSender>()
+    .AddScoped<IOrderReportSenderFactory, OrderReportSenderFactory>()
+    .AddScoped<IOrderReportSender, ConsoleOrderReportSender>()
+    .AddScoped<IOrderReportSender, FileOrderReportSender>()
     .AddScoped<IUI, UI>()
     .AddScoped<IOrderReportManager, OrderReportManager>()
     .BuildServiceProvider();

@@ -3,7 +3,7 @@ using OrderReportCreator.Domain.Models;
 using OrderReportCreator.Domain.Models.ClientAggregate;
 
 namespace OrderReportCreator.Application.Repositories;
-public class OrderMapCsv : ClassMap<Order>
+public sealed class OrderMapCsv : ClassMap<Order>
 {
     public OrderMapCsv()
     {

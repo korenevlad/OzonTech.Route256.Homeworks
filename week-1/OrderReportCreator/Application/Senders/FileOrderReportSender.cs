@@ -3,7 +3,7 @@ using CsvHelper;
 using OrderReportCreator.Domain.Models;
 
 namespace OrderReportCreator.Application.Senders;
-public class FileReportSender: IReportSender
+public class FileOrderReportSender: IOrderReportSender
 {
     private const string DirPath = @"..\..\..\..\ReportFiles";
     public bool CanSendReport(ResponseFormat responseFormat) 
