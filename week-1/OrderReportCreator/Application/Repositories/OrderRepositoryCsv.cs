@@ -6,7 +6,7 @@ using OrderReportCreator.Domain.Models.OrderAggregate;
 namespace OrderReportCreator.Application.Repositories;
 public class OrderRepositoryCsv: IOrderRepository
 {
-    private const string CsvFilePath = @"..\..\..\..\orders_log.csv";
+    private const string CsvFile = "orders_log.csv";
     public bool TryFindByClientId(long id)
     {
         var orders = GetOrders();
@@ -40,11 +40,30 @@ public class OrderRepositoryCsv: IOrderRepository
 
     private List<Order> GetOrders()
     {
-        using (var reader = new StreamReader(CsvFilePath))
+        var fullPathFile = GetPathFile();
+        using (var reader = new StreamReader(fullPathFile))
         using (var csv = new CsvReader(reader, CultureInfo.InvariantCulture))
         {
             csv.Context.RegisterClassMap<OrderMapCsv>();
             return csv.GetRecords<Order>().ToList();
         }
+    }
+    
+    private string GetProjectRoot()
+    {
+        var baseDirPath = new DirectoryInfo(AppContext.BaseDirectory);
+        while (baseDirPath != null && !File.Exists(Path.Combine(baseDirPath.FullName, $"{baseDirPath.Name}.csproj")))
+        {
+            baseDirPath = baseDirPath.Parent;
+        }
+        return baseDirPath?.FullName ?? throw new Exception("Не удалось найти корень проекта");
+    }
+    
+    private string GetPathFile()
+    {
+        var projectRoot = GetProjectRoot();
+        var relativePathFile = Path.Combine(projectRoot, "..", CsvFile);
+        var fullPathFile = Path.GetFullPath(relativePathFile);
+        return fullPathFile;
     }
 }
