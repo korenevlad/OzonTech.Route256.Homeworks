@@ -47,6 +47,7 @@ public class Startup
         services.AddSingleton<IGoodService, BLL.Implementations.GoodService>();
         services.AddSingleton<IGoodRepository, GoodRepositoryDictionary>();
         services.AddValidator<AddGoodRequestGrpcValidator>();
+        services.AddValidator<GetGoodByIdGrpcValidator>();
     }
 
     public void Configure(IApplicationBuilder app)

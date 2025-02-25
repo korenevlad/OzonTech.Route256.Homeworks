@@ -14,11 +14,12 @@ public class GoodService : IGoodService
     {
         _goodRepository = goodRepository;
     }
-    public Guid AddGood(double price, double weight, GoodType goodType, int numberStock)
+    public Guid AddGood(string name, double price, double weight, GoodType goodType, int numberStock)
     {
         var goodId = Guid.NewGuid();
         var good = new GoodDbo()
         {
+            Name = name,
             Id = goodId,
             Price = price,
             Weight = weight,

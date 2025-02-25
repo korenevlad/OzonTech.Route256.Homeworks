@@ -27,10 +27,11 @@ service GoodsServiceGrps {
 }
 
 message AddGoodRequestProto{
-  double price = 1;
-  double weight = 2;
-  GoodType good_type = 3;
-  int32 number_stock = 4;
+  string name = 1;
+  double price = 2;
+  double weight = 3;
+  GoodType good_type = 4;
+  int32 number_stock = 5;
 }
 
 message AddGoodResponseProto{
@@ -53,11 +54,12 @@ message GetGoodByIdRequestProto{
 
 message GetGoodByIdResponseProto{
   string id = 1;
-  double price = 2;
-  double weight = 3;
-  GoodType good_type = 4;
-  google.protobuf.Timestamp creation_date = 5;
-  int32 number_stock = 6;
+  string name = 2;
+  double price = 3;
+  double weight = 4;
+  GoodType good_type = 5;
+  google.protobuf.Timestamp creation_date = 6;
+  int32 number_stock = 7;
 }
 
 

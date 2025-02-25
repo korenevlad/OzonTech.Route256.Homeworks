@@ -10,6 +10,7 @@ public static class GoodMapper
         => new()
         {
             Id = good.Id.ToString(),
+            Name = good.Name,
             Price = good.Price,
             Weight = good.Weight,
             GoodType = good.GoodType.ToProto(),

@@ -8,6 +8,7 @@ public static class GoodMapper
         => new()
         {
             Id = goodDbo.Id,
+            Name = goodDbo.Name,
             Price = goodDbo.Price,
             Weight = goodDbo.Weight,
             GoodType = GoodTypeMapper.ToBll(goodDbo.GoodType),
