@@ -6,9 +6,4 @@
         <Nullable>enable</Nullable>
     </PropertyGroup>
 
-    <ItemGroup>
-      <ProjectReference Include="..\GoodService.DAL\GoodService.DAL.csproj" />
-    </ItemGroup>
-
-
 </Project>
