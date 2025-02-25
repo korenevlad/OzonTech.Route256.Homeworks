@@ -15,7 +15,7 @@ public class GrpcGoodsService : GoodsServiceGrps.GoodsServiceGrpsBase
 
     public override Task<AddGoodResponseProto> V1AddGood(AddGoodRequestProto request, ServerCallContext context)
     {
-        var goodId = _goodService.AddGood(request.Price, request.Weight, request.GoodType.ToBLL(), request.NumberStock);
+        var goodId = _goodService.AddGood(request.Name, request.Price, request.Weight, request.GoodType.ToBLL(), request.NumberStock);
         return Task.FromResult(new AddGoodResponseProto { Id = goodId.ToString()});
     }
 
