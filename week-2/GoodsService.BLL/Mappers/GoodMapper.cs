@@ -11,16 +11,7 @@ public static class GoodMapper
             Price = goodDbo.Price,
             Weight = goodDbo.Weight,
             GoodType = GoodTypeMapper.ToBll(goodDbo.GoodType),
-            NumberStock = goodDbo.NumberStock
-        };
-    
-    public static GoodDbo ToDal(this Good goodDbo)
-        => new()
-        {
-            Id = goodDbo.Id,
-            Price = goodDbo.Price,
-            Weight = goodDbo.Weight,
-            GoodType = GoodTypeMapper.ToDal(goodDbo.GoodType),
+            CreationDate = goodDbo.CreationDate,
             NumberStock = goodDbo.NumberStock
         };
 }

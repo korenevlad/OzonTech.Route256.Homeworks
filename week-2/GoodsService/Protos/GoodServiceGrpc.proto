@@ -1,0 +1,69 @@
+﻿syntax = "proto3";
+
+import "google/api/annotations.proto";
+import "google/protobuf/timestamp.proto";
+
+
+option csharp_namespace = "GoodsService.Grps";
+
+service GoodsServiceGrps {
+  rpc V1AddGood(AddGoodRequestProto) returns (AddGoodResponseProto){
+    option (google.api.http) = {
+      post: "/v1/AddGood"
+    };
+  }
+
+  rpc V1GetGoodsWithFilters(GetGoodsWithFiltersRequestProto) returns (GetGoodsWithFiltersResponseProto){
+    option (google.api.http) = {
+      get: "/v1/GetGoodsWithFilters"
+    };
+  }
+  
+  rpc V1GetGoodById(GetGoodByIdRequestProto) returns (GetGoodByIdResponseProto){
+    option (google.api.http) = {
+      get: "/v1/GetGoodById"
+    };
+  }
+}
+
+message AddGoodRequestProto{
+  double price = 1;
+  double weight = 2;
+  GoodType good_type = 3;
+  int32 number_stock = 4;
+}
+
+message AddGoodResponseProto{
+  string id = 1;
+}
+
+message GetGoodsWithFiltersRequestProto{
+  google.protobuf.Timestamp creation_date = 1;
+  GoodType good_type = 2;
+  int32 number_stock = 3;
+}
+
+message GetGoodsWithFiltersResponseProto{
+  repeated GetGoodByIdResponseProto goods = 1;
+}
+
+message GetGoodByIdRequestProto{
+  string id = 1;
+}
+
+message GetGoodByIdResponseProto{
+  string id = 1;
+  double price = 2;
+  double weight = 3;
+  GoodType good_type = 4;
+  google.protobuf.Timestamp creation_date = 5;
+  int32 number_stock = 6;
+}
+
+
+enum GoodType {
+  GENERAL = 0;
+  HOUSEHOLDCHEMICALS = 1;
+  TECHNIC = 2;
+  PRODUCTS = 3;
+}
