@@ -1,6 +1,3 @@
 ﻿namespace GoodsService.BLL.Exceptions;
 
-public class BusinessException
-{
-    
-}
+public class BusinessException : Exception { }

@@ -1,4 +1,4 @@
-﻿namespace GoodsService.Domain.Models;
+﻿namespace GoodsService.BLL.Domain.Models;
 
 public enum GoodType
 {

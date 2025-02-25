@@ -1,4 +1,4 @@
-﻿namespace GoodService.DAL.Repositories.Dbos;
+﻿namespace GoodService.DAL.Dbos;
 public record GoodDbo
 {
     public Guid Id { get; set; }

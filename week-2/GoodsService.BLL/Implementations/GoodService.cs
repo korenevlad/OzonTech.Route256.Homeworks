@@ -1,6 +1,9 @@
-﻿using GoodsService.BLL.Repositories;
-using GoodsService.BLL.Repositories.Dbos;
-using GoodsService.Domain.Models;
+﻿using GoodService.DAL.Dbos;
+using GoodService.DAL.Repositories;
+using GoodsService.BLL.Domain.Models;
+using GoodsService.BLL.Exceptions;
+using GoodsService.BLL.Mappers;
+using GoodType = GoodsService.BLL.Domain.Models.GoodType;
 
 namespace GoodsService.BLL.Implementations;
 
@@ -19,23 +22,32 @@ public class GoodService : IGoodService
             Id = goodId,
             Price = price,
             Weight = weight,
-            GoodType = goodType,
+            GoodType = goodType.ToDal(),
             CreationDate = DateTime.UtcNow,
             NumberStock = numberStock
         };
-        
-        // сохранить
-        
+        _goodRepository.AddGood(good);
         return goodId;
     }
 
-    public IEnumerable<Good> GetGoodsWithFilters(DateTime creationDate, GoodType goodType, int numberStock)
+    public List<Good> GetGoodsWithFilters(DateTime creationDate, GoodType goodType, int numberStock)
     {
-        throw new NotImplementedException();
+        var goodDtoList = _goodRepository.GetGoodsWithFilters(creationDate, goodType.ToDal(), numberStock).ToList();
+        var goodList = new List<Good>();
+        foreach (var goodDto in goodDtoList)
+        {
+            goodList.Add(goodDto.ToBll());
+        }
+        return goodList;
     }
 
     public Good GetGoodById(Guid id)
     {
-        throw new NotImplementedException();
+        var goodDbo = _goodRepository.GetGoodById(id);
+        if (goodDbo is null)
+        {
+            throw new GoodNotFoundException(id);
+        }
+        return goodDbo.ToBll();
     }
 }

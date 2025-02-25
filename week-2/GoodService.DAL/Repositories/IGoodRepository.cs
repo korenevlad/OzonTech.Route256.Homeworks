@@ -1,8 +1,9 @@
-﻿using GoodsService.BLL.Repositories.Dbos;
+﻿using GoodService.DAL.Dbos;
 
-namespace GoodsService.BLL.Repositories;
+namespace GoodService.DAL.Repositories;
 public interface IGoodRepository
 {
     void AddGood(GoodDbo good);
-    
+    IEnumerable<GoodDbo> GetGoodsWithFilters(DateTime creationDate, GoodType goodType, int numberStock);
+    GoodDbo? GetGoodById(Guid goodId);
 }
