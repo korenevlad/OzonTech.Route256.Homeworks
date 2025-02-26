@@ -31,9 +31,9 @@ public class GoodsServiceController : ControllerBase
     }
 
     [HttpGet("[action]")]
-    public IActionResult GetGoodById(Guid id)
+    public IActionResult GetGoodById([FromQuery]GetGoodByIdRequest request)
     {
-        var good = _goodService.GetGoodById(id);
+        var good = _goodService.GetGoodById(request.Id);
         return Ok(good.ToGetGoodByIdResponse());
     }
 }
