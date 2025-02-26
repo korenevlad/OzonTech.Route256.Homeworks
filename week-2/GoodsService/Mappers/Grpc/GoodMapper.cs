@@ -9,7 +9,6 @@ public static class GoodMapper
     public static GetGoodByIdResponseProto ToGetGoodByIdResponseProto(this Good good)
         => new()
         {
-            Id = good.Id.ToString(),
             Name = good.Name,
             Price = good.Price,
             Weight = good.Weight,

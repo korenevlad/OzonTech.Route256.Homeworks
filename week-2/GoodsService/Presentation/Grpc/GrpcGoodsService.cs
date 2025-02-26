@@ -21,7 +21,12 @@ public class GrpcGoodsService : GoodsServiceGrps.GoodsServiceGrpsBase
 
     public override Task<GetGoodsWithFiltersResponseProto> V1GetGoodsWithFilters(GetGoodsWithFiltersRequestProto request, ServerCallContext context)
     {
-        return base.V1GetGoodsWithFilters(request, context);
+        var goods =  _goodService.GetGoodsWithFilters(request.CreationDate?.ToDateTime(), request.GoodType.ToBLL(), request.NumberStock, request.PageNumber, request.PageSize);
+        var responseProto = new GetGoodsWithFiltersResponseProto
+        {
+            Goods = { goods.Select(x => x.ToGetGoodByIdResponseProto()) }
+        };
+        return Task.FromResult(responseProto);
     }
 
     public override Task<GetGoodByIdResponseProto> V1GetGoodById(GetGoodByIdRequestProto request, ServerCallContext context)

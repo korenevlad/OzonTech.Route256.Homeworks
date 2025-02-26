@@ -5,8 +5,11 @@ using GoodService.DAL.Repositories;
 using GoodService.DAL.Repositories.Implementation;
 using GoodsService.BLL;
 using GoodsService.Presentation.Grpc;
-using GoodsService.Presentation.Interceptors;
+using GoodsService.Presentation.Grpc.Interceptors;
 using GoodsService.Validators;
+using GoodsService.Validators.Grpc;
+using Microsoft.OpenApi.Any;
+using Microsoft.OpenApi.Models;
 
 namespace GoodsService;
 
@@ -36,18 +39,30 @@ public class Startup
                 {
                     options.EnableMessageValidation();
                     options.Interceptors.Add<BusinessExceptionInterceptor>();
+                    options.Interceptors.Add<LoggingInterceptor>();
                 })
             .AddJsonTranscoding();
 
         services.AddGrpcReflection();
         services.AddGrpcSwagger();
-        services.AddSwaggerGen();
+        services.AddSwaggerGen(c =>
+        {
+            c.MapType<GoodsService.Grps.GoodType>(() => new OpenApiSchema
+            {
+                Enum = Enum.GetValues(typeof(GoodsService.Grps.GoodType))
+                    .Cast<int>() 
+                    .Where(value => value != (int)GoodsService.Grps.GoodType.Unspecified)
+                    .Select(value => new OpenApiInteger(value))
+                    .ToList<IOpenApiAny>()
+            });
+        });
         services.AddGrpcValidation();
         
         services.AddSingleton<IGoodService, BLL.Implementations.GoodService>();
         services.AddSingleton<IGoodRepository, GoodRepositoryDictionary>();
         services.AddValidator<AddGoodRequestGrpcValidator>();
         services.AddValidator<GetGoodByIdGrpcValidator>();
+        services.AddValidator<GetGoodsWithFiltersGrpcValidator>();
     }
 
     public void Configure(IApplicationBuilder app)
@@ -63,4 +78,5 @@ public class Startup
                 endpoints.MapGrpcReflectionService();
             });
     }
+    
 }

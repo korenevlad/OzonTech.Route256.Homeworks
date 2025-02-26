@@ -7,7 +7,6 @@ public static class GoodMapper
     public static Good ToBll(this GoodDbo goodDbo)
         => new()
         {
-            Id = goodDbo.Id,
             Name = goodDbo.Name,
             Price = goodDbo.Price,
             Weight = goodDbo.Weight,

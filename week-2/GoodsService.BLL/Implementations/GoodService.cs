@@ -19,8 +19,8 @@ public class GoodService : IGoodService
         var goodId = Guid.NewGuid();
         var good = new GoodDbo()
         {
-            Name = name,
             Id = goodId,
+            Name = name,
             Price = price,
             Weight = weight,
             GoodType = goodType.ToDal(),
@@ -31,9 +31,9 @@ public class GoodService : IGoodService
         return goodId;
     }
 
-    public List<Good> GetGoodsWithFilters(DateTime creationDate, GoodType goodType, int numberStock)
+    public List<Good> GetGoodsWithFilters(DateTime? creationDate, GoodType goodType, int? numberStock, int pageNumber, int pageSize)
     {
-        var goodDtoList = _goodRepository.GetGoodsWithFilters(creationDate, goodType.ToDal(), numberStock).ToList();
+        var goodDtoList = _goodRepository.GetGoodsWithFilters(creationDate, goodType.ToDal(), numberStock, pageNumber, pageSize);
         var goodList = new List<Good>();
         foreach (var goodDto in goodDtoList)
         {

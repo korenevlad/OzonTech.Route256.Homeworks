@@ -12,12 +12,24 @@ public class GoodRepositoryDictionary : IGoodRepository
     public void AddGood(GoodDbo good) 
         => _goodStorage.TryAdd(good.Id, good);
 
-    public IEnumerable<GoodDbo> GetGoodsWithFilters(DateTime creationDate, GoodType goodType, int numberStock)
+    public IEnumerable<GoodDbo> GetGoodsWithFilters(DateTime? creationDate, GoodType goodType, int? numberStock, int pageNumber, int pageSize)
     {
-        return _goodStorage.Values
-            .Where(g => g.CreationDate >= creationDate 
-                        && g.GoodType == goodType 
-                        && g.NumberStock == numberStock);
+        var query = _goodStorage.Values.AsQueryable();
+        if (creationDate.HasValue) 
+            query = query.Where(g => g.CreationDate >= creationDate);
+
+        if (goodType != 0) 
+            query = query.Where(g => g.GoodType == goodType );
+        
+        if (numberStock.HasValue && numberStock > 0)
+            query = query.Where(g =>  g.NumberStock == numberStock);
+
+        var goods = query
+            .Skip((pageNumber - 1) * pageSize)
+            .Take(pageSize)
+            .ToList();
+        
+        return goods;
     }
 
     public GoodDbo? GetGoodById(Guid goodId)
