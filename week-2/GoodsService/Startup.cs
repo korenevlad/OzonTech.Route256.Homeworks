@@ -30,6 +30,8 @@ public class Startup
         // Валидация Http
         services.AddFluentValidationAutoValidation();
         services.AddValidatorsFromAssemblyContaining(typeof(AddGoodRequestValidator));
+        services.AddValidatorsFromAssemblyContaining(typeof(GetGoodsWithFiltersRequestValidator));
+        services.AddValidatorsFromAssemblyContaining(typeof(GetGoodByIdRequestValidator));
         
         // Фильтры Http
         services.AddSwaggerGen();
@@ -70,8 +72,8 @@ public class Startup
         
         //Валидация Grpc
         services.AddValidator<AddGoodRequestGrpcValidator>();
-        services.AddValidator<GetGoodByIdGrpcValidator>();
-        services.AddValidator<GetGoodsWithFiltersGrpcValidator>();
+        services.AddValidator<GetGoodByIdRequestGrpcValidator>();
+        services.AddValidator<GetGoodsWithFiltersRequestGrpcValidator>();
     }
 
     public void Configure(IApplicationBuilder app)

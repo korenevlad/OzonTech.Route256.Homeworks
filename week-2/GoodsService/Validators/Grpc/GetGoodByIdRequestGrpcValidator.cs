@@ -2,9 +2,9 @@
 using GoodsService.Grps;
 
 namespace GoodsService.Validators.Grpc;
-public class GetGoodByIdGrpcValidator : AbstractValidator<GetGoodByIdRequestProto>
+public class GetGoodByIdRequestGrpcValidator : AbstractValidator<GetGoodByIdRequestProto>
 {
-    public GetGoodByIdGrpcValidator()
+    public GetGoodByIdRequestGrpcValidator()
     {
         RuleFor(x => x.Id)
             .NotEmpty()
