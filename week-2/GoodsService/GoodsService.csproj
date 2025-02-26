@@ -32,8 +32,6 @@
     </ItemGroup>
 
     <ItemGroup>
-        <Protobuf Include="Protos\google\api\annotations.proto" ProtoRoot="Protos\"/>
-        <Protobuf Include="Protos\google\api\http.proto" ProtoRoot="Protos\"/>
         <Protobuf Include="Protos\GoodServiceGrpc.proto" ProtoRoot="Protos\">
             <GrpcServices>Server</GrpcServices>
             <Access>Public</Access>

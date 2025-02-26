@@ -2,7 +2,7 @@
 using Grpc.Core;
 using Grpc.Core.Interceptors;
 
-namespace GoodsService.Presentation.Interceptors;
+namespace GoodsService.Presentation.Grpc.Interceptors;
 public class BusinessExceptionInterceptor : Interceptor
 {
     public override async Task<TResponse> UnaryServerHandler<TRequest, TResponse>(

@@ -1,12 +1,14 @@
 ﻿using FluentValidation;
 using GoodsService.Grps;
 
-namespace GoodsService.Validators;
+namespace GoodsService.Validators.Grpc;
 public class GetGoodByIdGrpcValidator : AbstractValidator<GetGoodByIdRequestProto>
 {
     public GetGoodByIdGrpcValidator()
     {
         RuleFor(x => x.Id)
-            .NotEmpty().WithMessage("Id не должен быть пустым!");
+            .NotEmpty()
+            .Must(id => Guid.TryParse(id.ToString(), out _))
+            .WithMessage("Некорректный или пустой Id!");
     }
 }

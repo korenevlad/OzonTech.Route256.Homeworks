@@ -2,7 +2,7 @@
 
 import "google/api/annotations.proto";
 import "google/protobuf/timestamp.proto";
-
+import "google/protobuf/wrappers.proto";
 
 option csharp_namespace = "GoodsService.Grps";
 
@@ -41,7 +41,9 @@ message AddGoodResponseProto{
 message GetGoodsWithFiltersRequestProto{
   google.protobuf.Timestamp creation_date = 1;
   GoodType good_type = 2;
-  int32 number_stock = 3;
+  google.protobuf.Int32Value number_stock = 3;
+  int32 page_number = 4;
+  int32 page_size = 5;
 }
 
 message GetGoodsWithFiltersResponseProto{
@@ -53,19 +55,18 @@ message GetGoodByIdRequestProto{
 }
 
 message GetGoodByIdResponseProto{
-  string id = 1;
-  string name = 2;
-  double price = 3;
-  double weight = 4;
-  GoodType good_type = 5;
-  google.protobuf.Timestamp creation_date = 6;
-  int32 number_stock = 7;
+  string name = 1;
+  double price = 2;
+  double weight = 3;
+  GoodType good_type = 4;
+  google.protobuf.Timestamp creation_date = 5;
+  int32 number_stock = 6;
 }
 
-
 enum GoodType {
-  GENERAL = 0;
-  HOUSEHOLDCHEMICALS = 1;
-  TECHNIC = 2;
-  PRODUCTS = 3;
+  GOOD_TYPE_UNSPECIFIED = 0;
+  GENERAL = 1;
+  HOUSEHOLDCHEMICALS = 2;
+  TECHNIC = 3;
+  PRODUCTS = 4;
 }
