@@ -23,10 +23,10 @@ public class GoodsServiceController : ControllerBase
     }
     
     [HttpGet("[action]")]
-    public IActionResult GetGoodsWithFilters(DateTime? creationDate, GoodType goodType, int? numberStock, int pageNumber, int pageSize)
+    public IActionResult GetGoodsWithFilters([FromQuery] GetGoodsWithFiltersRequest request)
     {
         var goods = _goodService.GetGoodsWithFilters(
-            creationDate, goodType.ToBll(),numberStock, pageNumber, pageSize);
+            request.CreationDate, request.GoodType.ToBll(), request.NumberStock, request.PageNumber, request.PageSize);
         return Ok(goods);
     }
 

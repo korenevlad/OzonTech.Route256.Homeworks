@@ -3,9 +3,9 @@ using GoodsService.Grps;
 using Google.Protobuf.WellKnownTypes;
 
 namespace GoodsService.Validators.Grpc;
-public class GetGoodsWithFiltersGrpcValidator : AbstractValidator<GetGoodsWithFiltersRequestProto>
+public class GetGoodsWithFiltersRequestGrpcValidator : AbstractValidator<GetGoodsWithFiltersRequestProto>
 {
-    public GetGoodsWithFiltersGrpcValidator()
+    public GetGoodsWithFiltersRequestGrpcValidator()
     {
         RuleFor(x => x.CreationDate)
             .Must(BeValidTimestamp)
