@@ -1,6 +1,6 @@
-﻿namespace GoodsService.BLL.Domain.Models;
+﻿namespace GoodsService.Presentation.Controllers.v1.Models;
 
-public class Good
+public class GetGoodByIdResponse
 {
     public string Name { get; set; }
     public double Price { get; set; }

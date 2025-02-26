@@ -9,19 +9,19 @@ option csharp_namespace = "GoodsService.Grps";
 service GoodsServiceGrps {
   rpc V1AddGood(AddGoodRequestProto) returns (AddGoodResponseProto){
     option (google.api.http) = {
-      post: "/v1/AddGood"
+      post: "/v1/GoodsServiceGrps/AddGood"
     };
   }
 
   rpc V1GetGoodsWithFilters(GetGoodsWithFiltersRequestProto) returns (GetGoodsWithFiltersResponseProto){
     option (google.api.http) = {
-      get: "/v1/GetGoodsWithFilters"
+      get: "/v1/GoodsServiceGrps/GetGoodsWithFilters"
     };
   }
   
   rpc V1GetGoodById(GetGoodByIdRequestProto) returns (GetGoodByIdResponseProto){
     option (google.api.http) = {
-      get: "/v1/GetGoodById"
+      get: "/v1/GoodsServiceGrps/GetGoodById"
     };
   }
 }
