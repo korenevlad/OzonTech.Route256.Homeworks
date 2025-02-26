@@ -1,7 +1,6 @@
 ﻿using GoodsService.BLL;
 using GoodsService.Grps;
 using GoodsService.Mappers;
-using GoodsService.Mappers.Grpc;
 using Grpc.Core;
 
 namespace GoodsService.Presentation.Grpc;

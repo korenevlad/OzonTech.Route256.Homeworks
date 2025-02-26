@@ -6,13 +6,14 @@ using GoodService.DAL.Repositories.Implementation;
 using GoodsService.BLL;
 using GoodsService.Presentation.Grpc;
 using GoodsService.Presentation.Grpc.Interceptors;
-using GoodsService.Validators;
+using GoodsService.Presentation.Middleware;
 using GoodsService.Validators.Grpc;
+using GoodsService.Validators.Http;
+using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Models;
 
 namespace GoodsService;
-
 public class Startup
 {
     private readonly IConfiguration _configuration;
@@ -25,15 +26,19 @@ public class Startup
     public void ConfigureServices(IServiceCollection services)
     {
         services.AddControllers();
-        services.AddFluentValidationAutoValidation();
-        // services.AddValidatorsFromAssemblyContaining(typeof( ));
         
+        // Валидация Http
+        services.AddFluentValidationAutoValidation();
+        services.AddValidatorsFromAssemblyContaining(typeof(AddGoodRequestValidator));
+        
+        // Фильтры Http
         services.AddSwaggerGen();
-        // services.AddMvc(
-        //     x =>
-        //     {
-        //         x.Filters.Add(typeof( ));
-        //     });
+        services.AddMvc(
+            x =>
+            {
+                x.Filters.Add(typeof(BusinessExceptionFilter));
+            });
+        // Интерцепторы Grpc
         services.AddGrpc(
                 options =>
                 {
@@ -43,6 +48,7 @@ public class Startup
                 })
             .AddJsonTranscoding();
 
+        //Grpc
         services.AddGrpcReflection();
         services.AddGrpcSwagger();
         services.AddSwaggerGen(c =>
@@ -58,8 +64,11 @@ public class Startup
         });
         services.AddGrpcValidation();
         
+        //DI
         services.AddSingleton<IGoodService, BLL.Implementations.GoodService>();
         services.AddSingleton<IGoodRepository, GoodRepositoryDictionary>();
+        
+        //Валидация Grpc
         services.AddValidator<AddGoodRequestGrpcValidator>();
         services.AddValidator<GetGoodByIdGrpcValidator>();
         services.AddValidator<GetGoodsWithFiltersGrpcValidator>();
@@ -68,6 +77,8 @@ public class Startup
     public void Configure(IApplicationBuilder app)
     {
         app.UseRouting();
+        // Логирование
+        app.UseMiddleware<LoggingMiddleware>();
         app.UseSwagger();
         app.UseSwaggerUI();
         app.UseEndpoints(
