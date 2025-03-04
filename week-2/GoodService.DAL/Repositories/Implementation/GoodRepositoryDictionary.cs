@@ -9,9 +9,13 @@ public class GoodRepositoryDictionary : IGoodRepository
     {
         _goodStorage = new ConcurrentDictionary<Guid, GoodDbo>();
     }
-    public void AddGood(GoodDbo good) 
-        => _goodStorage.TryAdd(good.Id, good);
 
+    public Task AddGood(GoodDbo good)
+    {
+        _goodStorage.TryAdd(good.Id, good);
+        return Task.CompletedTask;
+    }
+    
     public IEnumerable<GoodDbo> GetGoodsWithFilters(DateTime? creationDate, GoodType goodType, int? numberStock, int pageNumber, int pageSize)
     {
         var query = _goodStorage.Values.AsQueryable();

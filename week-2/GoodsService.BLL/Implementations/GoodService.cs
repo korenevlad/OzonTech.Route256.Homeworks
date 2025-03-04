@@ -14,7 +14,7 @@ public class GoodService : IGoodService
     {
         _goodRepository = goodRepository;
     }
-    public Guid AddGood(string name, double price, double weight, GoodType goodType, int numberStock)
+    public async Task<Guid> AddGood(string name, double price, double weight, GoodType goodType, int numberStock)
     {
         var goodId = Guid.NewGuid();
         var good = new GoodDbo()
@@ -27,7 +27,7 @@ public class GoodService : IGoodService
             CreationDate = DateTime.UtcNow,
             NumberStock = numberStock
         };
-        _goodRepository.AddGood(good);
+        await _goodRepository.AddGood(good);
         return goodId;
     }
 
