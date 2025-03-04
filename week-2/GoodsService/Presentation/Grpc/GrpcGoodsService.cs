@@ -12,10 +12,10 @@ public class GrpcGoodsService : GoodsServiceGrps.GoodsServiceGrpsBase
         _goodService = goodService;
     }
 
-    public override Task<AddGoodResponseProto> V1AddGood(AddGoodRequestProto request, ServerCallContext context)
+    public override async Task<AddGoodResponseProto> V1AddGood(AddGoodRequestProto request, ServerCallContext context)
     {
-        var goodId = _goodService.AddGood(request.Name, request.Price, request.Weight, request.GoodType.ToBLL(), request.NumberStock);
-        return Task.FromResult(new AddGoodResponseProto { Id = goodId.ToString()});
+        var goodId = await _goodService.AddGood(request.Name, request.Price, request.Weight, request.GoodType.ToBLL(), request.NumberStock);
+        return new AddGoodResponseProto { Id = goodId.ToString()};
     }
 
     public override Task<GetGoodsWithFiltersResponseProto> V1GetGoodsWithFilters(GetGoodsWithFiltersRequestProto request, ServerCallContext context)

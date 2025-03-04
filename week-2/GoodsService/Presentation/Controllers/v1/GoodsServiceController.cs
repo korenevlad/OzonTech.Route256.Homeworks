@@ -16,9 +16,9 @@ public class GoodsServiceController : ControllerBase
     }
     
     [HttpPost("[action]")]
-    public IActionResult AddGood(AddGoodRequest request)
+    public async Task<IActionResult> AddGood(AddGoodRequest request)
     {
-        var id = _goodService.AddGood(request.Name, request.Price, request.Weight, request.GoodType.ToBll(), request.NumberStock);
+        var id = await _goodService.AddGood(request.Name, request.Price, request.Weight, request.GoodType.ToBll(), request.NumberStock);
         return Ok(id);
     }
     
