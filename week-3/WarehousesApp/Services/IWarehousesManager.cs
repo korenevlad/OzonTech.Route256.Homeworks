@@ -2,5 +2,5 @@
 
 public interface IWarehousesManager
 {
-    void StartWarehousesApp();
+    Task StartWarehousesApp();
 }
