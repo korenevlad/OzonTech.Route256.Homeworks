@@ -8,4 +8,9 @@ public class WarehouseService : IWarehouseService
     {
         _warehouseRepository = warehouseRepository;
     }
+
+    public async Task<(int, double)> GetTotalCost()
+    {
+        return await _warehouseRepository.GetTotalCost();
+    }
 }

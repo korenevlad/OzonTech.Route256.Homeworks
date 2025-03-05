@@ -2,5 +2,5 @@
 
 public interface IWarehouseRepository
 {
-    
+    Task<(int, double)> GetTotalCost();
 }

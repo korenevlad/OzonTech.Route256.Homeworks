@@ -8,8 +8,9 @@ public class WarehousesManager : IWarehousesManager
     {
         _warehouseService = warehouseService;
     }
-    public void StartWarehousesApp()
-    {
-        _warehouseService.
+    public async Task StartWarehousesApp()
+    { 
+        var (itemsCount, totalCost) = await _warehouseService.GetTotalCost(); 
+        Console.WriteLine($"Items count: {itemsCount}, Total cost: {totalCost}");
     }
 }
