@@ -1,4 +1,5 @@
 ﻿using System.Globalization;
+using System.Runtime.CompilerServices;
 using Microsoft.Extensions.Configuration;
 
 namespace WarehousesApp.Application.Repositories.Implementations;
@@ -14,7 +15,7 @@ public class WarehouseRepositoryCsv : IWarehouseRepository
         _maxParallelFiles = configuration.GetValue<int>("ParallelSettings:MaxParallelFiles");
         _maxParallelSummation = configuration.GetValue<int>("ParallelSettings:MaxParallelSummation");
     }
-    public async Task<(int, double)> GetTotalCost()
+    public async Task<(int, double)> GetTotalCost(CancellationToken cancellationToken)
     {
         var directoryPath = GetPathDir();
         var files = Directory.GetFiles(directoryPath, "*.csv");
@@ -26,10 +27,10 @@ public class WarehouseRepositoryCsv : IWarehouseRepository
         using var semaphore = new SemaphoreSlim(_maxParallelFiles);
         var tasks = files.Select(async file =>
         {
-            await semaphore.WaitAsync();
+            await semaphore.WaitAsync(cancellationToken);
             try
             {
-                var (fileItemCount, fileTotalCost) = await ProcessFileAsync(file, _maxParallelSummation);
+                var (fileItemCount, fileTotalCost) = await ProcessFileAsync(file, _maxParallelSummation, cancellationToken);
                 lock (lockObj)
                 {
                     itemsCount += fileItemCount;
@@ -44,21 +45,23 @@ public class WarehouseRepositoryCsv : IWarehouseRepository
         return (itemsCount, totalCost);
     }
 
-    private async Task<(int, double)> ProcessFileAsync(string filePath, int maxParallelSummation)
+    private async Task<(int, double)> ProcessFileAsync(string filePath, int maxParallelSummation, CancellationToken cancellationToken)
     {
         var costs = new List<double>();
         var readDataTask = Task.Run(async () =>
         {
-            await foreach (var cost in ReadFileAsync(filePath))
+            await foreach (var cost in ReadFileAsync(filePath, cancellationToken))
             {
                 costs.Add(cost);
             }
-        });
+        }, cancellationToken);
         var fileItemsCount = 0;
         var fileTotalCost = 0.0;
         object lockObj = new();
         await readDataTask;
-        await Parallel.ForEachAsync(costs, new ParallelOptions { MaxDegreeOfParallelism = maxParallelSummation },
+        await Parallel.ForEachAsync(
+            costs, 
+            new ParallelOptions { MaxDegreeOfParallelism = maxParallelSummation, CancellationToken = cancellationToken },
             async (cost, _) =>
             {
                 lock (lockObj)
@@ -66,18 +69,20 @@ public class WarehouseRepositoryCsv : IWarehouseRepository
                     fileItemsCount ++;
                     fileTotalCost += cost;
                 }
-                await Task.Delay(1000); // искусственная задержка 
+                await Task.Delay(1000, cancellationToken); // искусственная задержка 
             });
         return (fileItemsCount, fileTotalCost);
     }
     
-    private async IAsyncEnumerable<double> ReadFileAsync(string filePath)
+    private async IAsyncEnumerable<double> ReadFileAsync(string filePath, [EnumeratorCancellation] CancellationToken cancellationToken)
     {
         using var reader = new StreamReader(filePath);
         await reader.ReadLineAsync();
         string? row;
         while ((row = await reader.ReadLineAsync()) != null)
         {
+            if (cancellationToken.IsCancellationRequested)
+                yield break;
             var splitedRow = row.Split(',');
             if (splitedRow.Length == 2 && double.TryParse(splitedRow[1], NumberStyles.Any, CultureInfo.InvariantCulture, out var cost))
             {

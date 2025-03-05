@@ -2,5 +2,5 @@
 
 public interface IWarehousesManager
 {
-    Task StartWarehousesApp();
+    Task StartWarehousesApp(CancellationToken cancellationToken);
 }

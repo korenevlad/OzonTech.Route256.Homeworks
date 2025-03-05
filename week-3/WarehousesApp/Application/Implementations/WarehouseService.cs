@@ -9,8 +9,8 @@ public class WarehouseService : IWarehouseService
         _warehouseRepository = warehouseRepository;
     }
 
-    public async Task<(int, double)> GetTotalCost()
+    public async Task<(int, double)> GetTotalCost(CancellationToken cancellationToken)
     {
-        return await _warehouseRepository.GetTotalCost();
+        return await _warehouseRepository.GetTotalCost(cancellationToken);
     }
 }

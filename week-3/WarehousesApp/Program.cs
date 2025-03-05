@@ -20,4 +20,14 @@ var serviceProvider = new ServiceCollection()
     .BuildServiceProvider();
 
 var warehousesManager = serviceProvider.GetRequiredService<IWarehousesManager>();
-await warehousesManager.StartWarehousesApp();
+using var tokenSource = new CancellationTokenSource();
+
+// Тестирование CancelationTokenSource
+// Console.CancelKeyPress += (sender, eventArgs) =>
+// {
+//     Console.WriteLine("Запрос отменён!");
+//     tokenSource.Cancel();
+//     eventArgs.Cancel = true;
+// };
+
+await warehousesManager.StartWarehousesApp(tokenSource.Token);

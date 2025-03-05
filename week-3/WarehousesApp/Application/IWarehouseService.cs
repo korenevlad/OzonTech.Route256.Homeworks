@@ -2,5 +2,5 @@
 
 public interface IWarehouseService
 {
-    Task<(int, double)> GetTotalCost();
+    Task<(int, double)> GetTotalCost(CancellationToken cancellationToken);
 }
