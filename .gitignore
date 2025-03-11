@@ -31,8 +31,6 @@ packages/
 .idea/
 *.csproj.user
 
-appsettings.json
-appsettings.*.json
 secrets.json
 launchSettings.json
 
