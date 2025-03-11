@@ -1,0 +1,50 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <Nullable>enable</Nullable>
+        <ImplicitUsings>enable</ImplicitUsings>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Calzolari.Grpc.AspNetCore.Validation" Version="8.1.0" />
+        <PackageReference Include="FluentValidation" Version="12.0.0-preview1" />
+        <PackageReference Include="FluentValidation.AspNetCore" Version="11.3.0" />
+        <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.11.0" />
+        <PackageReference Include="Google.Api.CommonProtos" Version="2.16.0" />
+        <PackageReference Include="Google.Events.Protobuf" Version="1.6.0" />
+        <PackageReference Include="Google.Protobuf" Version="3.30.0-rc1" />
+        <PackageReference Include="Google.Protobuf.Tools" Version="3.30.0-rc1" />
+        <PackageReference Include="Grpc" Version="2.46.6" />
+        <PackageReference Include="Grpc.AspNetCore" Version="2.67.0" />
+        <PackageReference Include="Grpc.AspNetCore.Server" Version="2.67.0" />
+        <PackageReference Include="Grpc.AspNetCore.Server.Reflection" Version="2.67.0" />
+        <PackageReference Include="Grpc.Net.Client" Version="2.67.0" />
+        <PackageReference Include="Grpc.Tools" Version="2.70.0">
+          <PrivateAssets>all</PrivateAssets>
+          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="Microsoft.AspNetCore.Grpc.Swagger" Version="0.8.12" />
+        <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.13"/>
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.2" />
+        <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2"/>
+        <PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="7.2.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <Protobuf Include="Protos\GoodServiceGrpc.proto" ProtoRoot="Protos\">
+            <GrpcServices>Server</GrpcServices>
+            <Access>Public</Access>
+            <ProtoCompile>True</ProtoCompile>
+            <CompileOutputs>True</CompileOutputs>
+            <OutputDir>obj/Debug/net8.0/</OutputDir>
+            <Generator>MSBuild:Compile</Generator>
+        </Protobuf>
+    </ItemGroup>
+    
+    <ItemGroup>
+      <ProjectReference Include="..\GoodService.DAL\GoodService.DAL.csproj" />
+      <ProjectReference Include="..\GoodsService.BLL\GoodsService.BLL.csproj" />
+    </ItemGroup>
+
+</Project>
