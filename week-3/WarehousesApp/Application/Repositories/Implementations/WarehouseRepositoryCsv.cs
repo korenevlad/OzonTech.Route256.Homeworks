@@ -9,7 +9,6 @@ public class WarehouseRepositoryCsv : IWarehouseRepository
     private readonly int _maxParallelFiles;
     private readonly int _maxParallelSummation;
 
-    // TODO: Cancelation token везде
     public WarehouseRepositoryCsv(IConfiguration configuration)
     {
         _maxParallelFiles = configuration.GetValue<int>("ParallelSettings:MaxParallelFiles");
@@ -23,7 +22,6 @@ public class WarehouseRepositoryCsv : IWarehouseRepository
         var processedFiles = 0;
         var itemsCount = 0;
         var totalCost = 0.0;
-        object lockObj = new();
         using var semaphore = new SemaphoreSlim(_maxParallelFiles);
         var tasks = files.Select(async file =>
         {
@@ -31,13 +29,16 @@ public class WarehouseRepositoryCsv : IWarehouseRepository
             try
             {
                 var (fileItemCount, fileTotalCost) = await ProcessFileAsync(file, _maxParallelSummation, cancellationToken);
-                lock (lockObj)
+                
+                Interlocked.Add(ref itemsCount, fileItemCount);
+                double initialValue, newValue;
+                do
                 {
-                    itemsCount += fileItemCount;
-                    totalCost += fileTotalCost;
-                }
-                Interlocked.Increment(ref processedFiles);
-                Console.WriteLine($"Warehouses processed: {processedFiles}/{totalFiles}");
+                    initialValue = totalCost;
+                    newValue = initialValue + fileTotalCost;
+                } while (Interlocked.CompareExchange(ref totalCost, newValue, initialValue) != initialValue);
+                var currentProcessed = Interlocked.Increment(ref processedFiles);
+                Console.WriteLine($"Warehouses processed: {currentProcessed}/{totalFiles}");
             }
             finally { semaphore.Release(); }
         }).ToList();
@@ -57,18 +58,20 @@ public class WarehouseRepositoryCsv : IWarehouseRepository
         }, cancellationToken);
         var fileItemsCount = 0;
         var fileTotalCost = 0.0;
-        object lockObj = new();
+        var semaphore = new SemaphoreSlim(1, 1);
         await readDataTask;
         await Parallel.ForEachAsync(
             costs, 
             new ParallelOptions { MaxDegreeOfParallelism = maxParallelSummation, CancellationToken = cancellationToken },
             async (cost, _) =>
             {
-                lock (lockObj)
+                await semaphore.WaitAsync(cancellationToken);
+                try
                 {
                     fileItemsCount ++;
-                    fileTotalCost += cost;
+                    fileTotalCost += cost; 
                 }
+                finally{ semaphore.Release(); }
                 await Task.Delay(1000, cancellationToken); // искусственная задержка 
             });
         return (fileItemsCount, fileTotalCost);
