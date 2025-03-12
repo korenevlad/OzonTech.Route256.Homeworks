@@ -1,0 +1,90 @@
+syntax = "proto3";
+
+package ozon.route256.customer_service;
+option csharp_namespace = "Ozon.Route256.Week4.CustomerService";
+
+import "google/protobuf/wrappers.proto";
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/empty.proto";
+import "google/api/annotations.proto";
+
+
+service CustomerService {
+  rpc V1QueryCustomers (V1QueryCustomersRequest) returns (V1QueryCustomersResponse){
+    option (google.api.http) = {
+      post: "/V1QueryCustomers"
+      body: "*"
+    };
+  }
+  rpc V1CreateCustomer (V1CreateCustomerRequest) returns (V1CreateCustomerResponse){
+    option (google.api.http) = {
+      post: "/V1CreateCustomer"
+      body: "*"
+    };
+  }
+  rpc V1DeleteCustomersByIds (V1DeleteCustomersByIdsRequest) returns (V1DeleteCustomersByIdsResponse){
+    option (google.api.http) = {
+      post: "/V1DeleteCustomersByIds"
+      body: "*"
+    };
+  }
+}
+
+message V1DeleteCustomersByIdsResponse {
+  oneof result {
+    DeleteSuccess ok = 1;
+    DeleteError error = 2;
+  }
+
+  message DeleteSuccess {
+    repeated int64 customer_ids = 1;
+  }
+
+  message DeleteError {
+    string code = 1;
+    string text = 2;
+  }
+}
+
+message V1QueryCustomersRequest {
+  repeated int64 customer_ids = 1;
+  repeated int64 region_ids = 2;
+  repeated string full_names = 3;
+}
+
+message V1CreateCustomerRequest {
+  int64 region_id = 1;
+  string full_name = 2;
+}
+
+message V1DeleteCustomersByIdsRequest {
+  repeated int64 customer_ids = 1;
+}
+
+message V1CreateCustomerResponse {
+  oneof result {
+    CreateSuccess ok = 1;
+    CreateError error = 2;
+  }
+
+  message CreateSuccess {
+    int64 customer_id = 1; 
+  }
+
+  message CreateError {
+    string code = 1;
+    string text = 2;
+  }
+}
+
+message V1QueryCustomersResponse {
+  repeated Customer customers = 1;
+  int64 total_count = 2;
+
+  message Customer {
+    int64 customer_id = 1;
+    int64 regionId = 2;
+    string full_name = 3;
+    google.protobuf.Timestamp created_at = 4;
+  }
+}
