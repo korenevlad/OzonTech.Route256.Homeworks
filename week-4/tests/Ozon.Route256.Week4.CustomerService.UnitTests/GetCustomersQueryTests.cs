@@ -14,11 +14,11 @@ public class GetCustomersQueryTests
     public async Task Handle_SendRequestWithAllFilters_GetAllCustomersWithAllFilters()
     {
         //Arrange
-        var customersFaker = CustomerDbRecordFaker.GenerateList();
+        var customersFaker = CustomerDbRecordFaker.GenerateListForGetCustomersQuery();
         var getCustomersQueryRequestFaker = GetCustomersQueryRequestFaker.GenerateFromCustomers(customersFaker);
         
         var service = GetCustomersQueryStub.Create();
-        service.CustomerRepositoryMock.GetCustomersQueryReturnsCustomers(getCustomersQueryRequestFaker, customersFaker.ToArray());
+        service.CustomerRepositoryMock.GetCustomersQueryReturnCustomers(getCustomersQueryRequestFaker, customersFaker.ToArray());
         
         //Act
         var response = await service.Handle(getCustomersQueryRequestFaker, CancellationToken.None);
@@ -33,11 +33,11 @@ public class GetCustomersQueryTests
     public async Task Handle_SendRequestWithFilterCustomerIds_GetAllCustomersById()
     {
         //Arrange
-        var customersFaker = CustomerDbRecordFaker.GenerateList(includeCustomerIds: false);
+        var customersFaker = CustomerDbRecordFaker.GenerateListForGetCustomersQuery(includeCustomerIds: false);
         var getCustomersQueryRequestFaker = GetCustomersQueryRequestFaker.GenerateFromCustomers(customersFaker, includeCustomerIds: false);
         
         var service = GetCustomersQueryStub.Create();
-        service.CustomerRepositoryMock.GetCustomersQueryReturnsCustomers(getCustomersQueryRequestFaker, customersFaker.ToArray());
+        service.CustomerRepositoryMock.GetCustomersQueryReturnCustomers(getCustomersQueryRequestFaker, customersFaker.ToArray());
         
         //Act
         var response = await service.Handle(getCustomersQueryRequestFaker, CancellationToken.None);
@@ -52,11 +52,11 @@ public class GetCustomersQueryTests
     public async Task Handle_SendRequestWithFilterRegionIds_GetAllCustomersByRegionId()
     {
         //Arrange
-        var customersFaker = CustomerDbRecordFaker.GenerateList(includeRegionIds: false);
+        var customersFaker = CustomerDbRecordFaker.GenerateListForGetCustomersQuery(includeRegionIds: false);
         var getCustomersQueryRequestFaker = GetCustomersQueryRequestFaker.GenerateFromCustomers(customersFaker, includeRegionIds: false);
         
         var service = GetCustomersQueryStub.Create();
-        service.CustomerRepositoryMock.GetCustomersQueryReturnsCustomers(getCustomersQueryRequestFaker, customersFaker.ToArray());
+        service.CustomerRepositoryMock.GetCustomersQueryReturnCustomers(getCustomersQueryRequestFaker, customersFaker.ToArray());
         
         //Act
         var response = await service.Handle(getCustomersQueryRequestFaker, CancellationToken.None);
@@ -71,11 +71,11 @@ public class GetCustomersQueryTests
     public async Task Handle_SendRequestWithFilterFullNames_GetAllCustomersByFullName()
     {
         //Arrange
-        var customersFaker = CustomerDbRecordFaker.GenerateList(includeFullNames: false);
+        var customersFaker = CustomerDbRecordFaker.GenerateListForGetCustomersQuery(includeFullNames: false);
         var getCustomersQueryRequestFaker = GetCustomersQueryRequestFaker.GenerateFromCustomers(customersFaker, includeFullNames: false);
         
         var service = GetCustomersQueryStub.Create();
-        service.CustomerRepositoryMock.GetCustomersQueryReturnsCustomers(getCustomersQueryRequestFaker, customersFaker.ToArray());
+        service.CustomerRepositoryMock.GetCustomersQueryReturnCustomers(getCustomersQueryRequestFaker, customersFaker.ToArray());
         
         //Act
         var response = await service.Handle(getCustomersQueryRequestFaker, CancellationToken.None);
@@ -90,11 +90,11 @@ public class GetCustomersQueryTests
     public async Task Handle_SendRequestWithoutFilters_GetAllCustomersWithoutFilters()
     {
         //Arrange
-        var customersFaker = CustomerDbRecordFaker.GenerateList(includeCustomerIds: false, includeRegionIds: false, includeFullNames: false);
+        var customersFaker = CustomerDbRecordFaker.GenerateListForGetCustomersQuery(includeCustomerIds: false, includeRegionIds: false, includeFullNames: false);
         var getCustomersQueryRequestFaker = GetCustomersQueryRequestFaker.GenerateFromCustomers(customersFaker, includeCustomerIds: false, includeRegionIds: false, includeFullNames: false);
         
         var service = GetCustomersQueryStub.Create();
-        service.CustomerRepositoryMock.GetCustomersQueryReturnsCustomers(getCustomersQueryRequestFaker, customersFaker.ToArray());
+        service.CustomerRepositoryMock.GetCustomersQueryReturnCustomers(getCustomersQueryRequestFaker, customersFaker.ToArray());
         
         //Act
         var response = await service.Handle(getCustomersQueryRequestFaker, CancellationToken.None);
