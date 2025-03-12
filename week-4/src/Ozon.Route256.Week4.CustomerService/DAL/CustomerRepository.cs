@@ -8,7 +8,7 @@ namespace Ozon.Route256.Week4.CustomerService.DAL;
 public class CustomerRepository : ICustomerRepository
 {
     private static long _lastId;
-    private readonly ConcurrentDictionary<long, CustomerDbRecord> _storage = [];
+    private readonly ConcurrentDictionary<long, CustomerDbRecord> _storage = new();
     
     public Task<long> CreateCustomer(string fullName, long regionId, CancellationToken token)
     {
@@ -32,7 +32,7 @@ public class CustomerRepository : ICustomerRepository
 
     public async Task DeleteCustomers(long[] customersIds, CancellationToken token)
     {
-        var customersToDelete = await GetCustomersByFilters(customersIds, [], []);
+        var customersToDelete = await GetCustomersByFilters(customersIds, Array.Empty<long>(), Array.Empty<string>());
 
         foreach (var customer in customersToDelete)
         {
