@@ -4,7 +4,7 @@ using Ozon.Route256.Week4.CustomerService.DAL.Repositories.Exceptions;
 
 namespace Ozon.Route256.Week4.CustomerService.Domain.Services.CreateCustomer;
 
-public sealed class CreateCustomerCommandHandler : IRequestHandler<CreateCustomerCommandRequest, CreateCustomerCommandResponse>
+public class CreateCustomerCommandHandler : IRequestHandler<CreateCustomerCommandRequest, CreateCustomerCommandResponse>
 {
     private readonly ICustomerRepository _customerRepository;
 
