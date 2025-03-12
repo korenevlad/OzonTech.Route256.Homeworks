@@ -4,7 +4,7 @@ using Ozon.Route256.Week4.CustomerService.DAL.Contracts;
 namespace Ozon.Route256.Week4.CustomerService.UnitTests.Fakers;
 public class CustomerDbRecordFaker
 {
-    public static List<CustomerDbRecord> GenerateList(
+    public static List<CustomerDbRecord> GenerateListForGetCustomersQuery(
         int count = 5, 
         bool includeCustomerIds = true, 
         bool includeRegionIds = true, 
@@ -39,6 +39,14 @@ public class CustomerDbRecordFaker
             faker.RuleFor(c => c.FullName, _ => string.Empty);
         }
 
+        return faker.Generate(count);
+    }
+    
+    public static List<CustomerDbRecord> GenerateListForDeleteCustomersByIds(
+        int count = 5)
+    {
+        var faker = new AutoFaker<CustomerDbRecord>();
+        faker.RuleFor(c => c.Id, f => f.Random.Long(1, 1000));
         return faker.Generate(count);
     }
 }
