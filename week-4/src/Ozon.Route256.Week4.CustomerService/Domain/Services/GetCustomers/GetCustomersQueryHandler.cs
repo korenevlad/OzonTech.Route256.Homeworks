@@ -4,7 +4,7 @@ using Ozon.Route256.Week4.CustomerService.Extensions.Mapping;
 
 namespace Ozon.Route256.Week4.CustomerService.Domain.Services.GetCustomers;
 
-public sealed class GetCustomersQueryHandler : IRequestHandler<GetCustomersQueryRequest, GetCustomersQueryResponse>
+public class GetCustomersQueryHandler : IRequestHandler<GetCustomersQueryRequest, GetCustomersQueryResponse>
 {
     private readonly ICustomerRepository _customerRepository;
 

@@ -3,12 +3,11 @@ using FluentAssertions;
 using Ozon.Route256.Week4.CustomerService.DAL.Repositories.Exceptions;
 using Ozon.Route256.Week4.CustomerService.Domain.Services.CreateCustomer;
 using Ozon.Route256.Week4.CustomerService.UnitTests.Extensions;
-using Ozon.Route256.Week4.CustomerService.UnitTests.Faker;
+using Ozon.Route256.Week4.CustomerService.UnitTests.Fakers;
 using Ozon.Route256.Week4.CustomerService.UnitTests.Stubs;
 using Xunit;
 
 namespace Ozon.Route256.Week4.CustomerService.UnitTests;
-
 public class CreateCustomerTests
 {
     [Fact]
@@ -16,14 +15,14 @@ public class CreateCustomerTests
     {
         //Arrange
         var customer = CustomerFaker.Generate().WithId(22);
-        var sharedCreateCustomerCommandRequest = new CreateCustomerCommandRequest(customer.FullName, customer.RegionId);
+        var createCustomerCommandRequest = new CreateCustomerCommandRequest(customer.FullName, customer.RegionId);
         
         var service = CreateCustomerStub.Create();
-        service.CustomerRepositoryMock.CreateCustomerReturnId(sharedCreateCustomerCommandRequest.FullName,
-            sharedCreateCustomerCommandRequest.RegionId, customer.Id);
+        service.CustomerRepositoryMock.CreateCustomerReturnId(createCustomerCommandRequest.FullName,
+            createCustomerCommandRequest.RegionId, customer.Id);
         
         //Act
-        var response = await service.Handle(sharedCreateCustomerCommandRequest, CancellationToken.None);
+        var response = await service.Handle(createCustomerCommandRequest, CancellationToken.None);
         
         //Assert
         service.VerifyAll();
