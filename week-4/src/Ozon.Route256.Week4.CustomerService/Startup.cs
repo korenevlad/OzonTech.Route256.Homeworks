@@ -1,3 +1,5 @@
+using Ozon.Route256.Week4.CustomerService.DAL;
+using Ozon.Route256.Week4.CustomerService.DAL.Repositories;
 using Ozon.Route256.Week4.CustomerService.Extensions;
 using Ozon.Route256.Week4.CustomerService.Presentation.Controllers.Grpc;
 
@@ -5,7 +7,7 @@ namespace Ozon.Route256.Week4.CustomerService;
 
 public class Startup
 {
-    private readonly IConfiguration _configuration;
+    private IConfiguration _configuration { get; }
 
     public Startup(IConfiguration configuration)
     {
@@ -31,6 +33,8 @@ public class Startup
         services.AddGrpcSwagger();
         services.AddSwaggerGen();
         services.AddGrpcReflection();
+
+        AddServices(services, _configuration);
     }
 
     public void Configure(IApplicationBuilder app)
@@ -46,4 +50,12 @@ public class Startup
                 endpoints.MapGrpcReflectionService();
             });
     }
+    
+    private static void AddServices(
+        IServiceCollection services,
+        IConfiguration configuration)
+    {
+        services.AddSingleton<ICustomerRepository, CustomerRepository>();
+    }
+
 }

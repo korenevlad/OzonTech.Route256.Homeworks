@@ -11,7 +11,7 @@ namespace Ozon.Route256.Week4.CustomerService.UnitTests;
 public class CreateCustomerTests
 {
     [Fact]
-    public async Task Handle_ShouldReturnCustomerId_WhenCustomerCreatedSuccessfully()
+    public async Task Handle_UniqueId_CustomerCreatedSuccessfully()
     {
         //Arrange
         var customer = CustomerFaker.Generate().WithId(22);
