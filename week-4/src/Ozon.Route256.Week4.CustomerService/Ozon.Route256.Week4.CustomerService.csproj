@@ -1,0 +1,33 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <Nullable>enable</Nullable>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+        <IncludeHttpRuleProtos>true</IncludeHttpRuleProtos>
+        <RootNamespace>Ozon.Route256.Week4.CustomerService</RootNamespace>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Google.Protobuf" Version="3.27.2" />
+        <PackageReference Include="Grpc.AspNetCore" Version="2.64.0" />
+        <PackageReference Include="Grpc.AspNetCore.Server.Reflection" Version="2.64.0" />
+        <PackageReference Include="Grpc.Net.Client" Version="2.64.0" />
+        <PackageReference Include="Grpc.Tools" Version="2.65.0">
+          <PrivateAssets>all</PrivateAssets>
+          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="MediatR" Version="12.4.0" />
+        <PackageReference Include="Microsoft.AspNetCore.Grpc.JsonTranscoding" Version="8.0.7" />
+        <PackageReference Include="Microsoft.AspNetCore.Grpc.Swagger" Version="0.8.7" />
+        <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.7" />
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.0-preview.1.25080.5" />
+        <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <Protobuf Include="Protos\customer.proto" />
+    </ItemGroup>
+
+</Project>
