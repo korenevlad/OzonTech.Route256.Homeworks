@@ -42,10 +42,10 @@
 ```sql
 select t.number as task_number
      , t.title as task_title
-	   , ts.name as status_name
-	   , u.email as author_email
-	   , u2.email as assignee_email
-	   , t.created_at as created_at
+     , ts.name as status_name
+     , u.email as author_email
+     , u2.email as assignee_email
+     , t.created_at as created_at
      , tl.at as in_progress_at
      , t.completed_at as completed_at
      , (tl2.at - tl.at) as work_duration
@@ -57,12 +57,11 @@ join users u on u.id = t.created_by_user_id
 join users u2 on u2.id = t.assigned_to_user_id
 where tl.status = '3' /* InProgress */
 and tl.task_id in (
-	select tl.task_id
-	from task_logs tl
-	where tl.status in ('3', '4')
-	group by tl.task_id 
-	having count(distinct tl.status) = 2
-)
+     select tl.task_id
+     from task_logs tl
+     where tl.status in ('3', '4')
+     group by tl.task_id 
+     having count(distinct tl.status) = 2)
 order by work_duration asc
 limit 100
 ```
@@ -120,26 +119,26 @@ select res.id as user_id
      , u2.email as email
      , sum(res.count_active) AS total_events
 from (
-	select u.id as id
-       , count(*) as count_active
-	from tasks t 
-	join users u on u.id = t.created_by_user_id
-	where u.blocked_at is null
-	group by u.id
-	union all
-	select u.id as id
-       , count(*) as count_active
-	from task_logs tl 
-	join users u on u.id = tl.user_id
-	where u.blocked_at is not null
-	group by u.id
-	union all
-	select u.id as id
-       , count(*) as count_active
-	from task_comments tc 
-	join users u on u.id = tc.author_user_id
-	where u.blocked_at is not null
-	group by u.id
+     select u.id as id
+          , count(*) as count_active
+     from tasks t 
+     join users u on u.id = t.created_by_user_id
+     where u.blocked_at is null
+     group by u.id
+     union all
+     select u.id as id
+          , count(*) as count_active
+     from task_logs tl 
+     join users u on u.id = tl.user_id
+     where u.blocked_at is not null
+     group by u.id
+     union all
+     select u.id as id
+          , count(*) as count_active
+     from task_comments tc
+     join users u on u.id = tc.author_user_id
+     where u.blocked_at is not null
+     group by u.id
 ) as res
 join users u2 on u2.id = res.id
 group by res.id, u2.email 
@@ -190,7 +189,8 @@ limit 100
 ### Решение
 ```sql
 with recent_tasks as (
-    select id, number
+    select id
+         , number
          , created_by_user_id
          , assigned_to_user_id
     from tasks
@@ -198,7 +198,7 @@ with recent_tasks as (
     limit 5
 ),
 comments as (
-    select tc.task_id,
+    select tc.task_id
          , tc.author_user_id
          , u.email as author_email
          , tc.message
@@ -236,14 +236,13 @@ result as (
          , case when c.is_answer = 'answer' then m.potential_answer end as answer
          , case when c.is_answer = 'answer' then m.potential_answered_at end as answered_at
     from matched_comments m
-    left join comments c 
-        on m.task_id = c.task_id 
+    left join comments c on m.task_id = c.task_id 
         and c.message = m.potential_answer 
         and c.at = m.potential_answered_at
 )
 select rt.number as task_number
      , fm.author_email  
-     , m.assignee_email
+     , fm.assignee_email
      , fm.question
      , fm.answer
      , fm.asked_at
