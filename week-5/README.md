@@ -128,7 +128,7 @@ from (
 	group by u.id
 	union all
 	select u.id as id
-	     , count(*) as count_active
+       , count(*) as count_active
 	from task_logs tl 
 	join users u on u.id = tl.user_id
 	where u.blocked_at is not null
@@ -190,24 +190,25 @@ limit 100
 ### Решение
 ```sql
 with recent_tasks as (
-    select id, number, created_by_user_id, assigned_to_user_id
+    select id, number
+         , created_by_user_id
+         , assigned_to_user_id
     from tasks
     order by created_at desc
     limit 5
 ),
 comments as (
-    select 
-        tc.task_id,
-        tc.author_user_id,
-        u.email as author_email,
-        tc.message,
-        tc.at,
-        t.created_by_user_id as task_author_id,
-        t.assigned_to_user_id as task_assignee_id,
-        au.email as task_author_email,
-        asu.email as task_assignee_email,
-        case when tc.author_user_id = t.created_by_user_id then 'question' end as is_question,
-        case when tc.author_user_id = t.assigned_to_user_id then 'answer' end as is_answer
+    select tc.task_id,
+         , tc.author_user_id
+         , u.email as author_email
+         , tc.message
+         , tc.at
+         , t.created_by_user_id as task_author_id
+         , t.assigned_to_user_id as task_assignee_id
+         , au.email as task_author_email
+         , asu.email as task_assignee_email,
+    case when tc.author_user_id = t.created_by_user_id then 'question' end as is_question,
+    case when tc.author_user_id = t.assigned_to_user_id then 'answer' end as is_answer
     from task_comments tc
     join recent_tasks t on tc.task_id = t.id
     join users u on tc.author_user_id = u.id
@@ -216,44 +217,37 @@ comments as (
     where tc.author_user_id in (t.created_by_user_id, t.assigned_to_user_id)
 ),
 matched_comments as (
-    select 
-        task_id,
-        task_author_email as author_email,
-        task_assignee_email as assignee_email,
-        message as question,
-        at as asked_at,
-        lag(message) over (
-            partition by task_id order by at
-        ) as potential_answer,
-        lag(at) over (
-            partition by task_id order by at
-        ) as potential_answered_at
+    select task_id
+         , task_author_email as author_email
+         , task_assignee_email as assignee_email
+         , message as question
+         , at as asked_at
+         , lag(message) over (partition by task_id order by at) as potential_answer
+         , lag(at) over ( partition by task_id order by at) as potential_answered_at
     from comments
     where is_question = 'question'
 ),
 result as (
-    select 
-        m.task_id,
-        m.author_email,
-        m.assignee_email,
-        m.question,
-        m.asked_at,
-        case when c.is_answer = 'answer' then m.potential_answer end as answer,
-        case when c.is_answer = 'answer' then m.potential_answered_at end as answered_at
+    select m.task_id
+         , m.author_email
+         , m.assignee_email
+         , m.question
+         , m.asked_at
+         , case when c.is_answer = 'answer' then m.potential_answer end as answer
+         , case when c.is_answer = 'answer' then m.potential_answered_at end as answered_at
     from matched_comments m
     left join comments c 
         on m.task_id = c.task_id 
         and c.message = m.potential_answer 
         and c.at = m.potential_answered_at
 )
-select 
-    rt.number as task_number,
-    fm.author_email,  
-    fm.assignee_email,
-    fm.question,
-    fm.answer,
-    fm.asked_at,
-    fm.answered_at
+select rt.number as task_number
+     , fm.author_email  
+     , m.assignee_email
+     , fm.question
+     , fm.answer
+     , fm.asked_at
+     , fm.answered_at
 from recent_tasks rt
 left join result fm on rt.id = fm.task_id
 order by rt.number, coalesce(fm.asked_at, now())
