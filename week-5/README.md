@@ -40,7 +40,31 @@
 
 ### Решение
 ```sql
-/* ЗДЕСЬ ДОЛЖНО БЫТЬ РЕШЕНИЕ */
+select t.number as task_number
+     , t.title as task_title
+	   , ts.name as status_name
+	   , u.email as author_email
+	   , u2.email as assignee_email
+	   , t.created_at as created_at
+     , tl.at as in_progress_at
+     , t.completed_at as completed_at
+     , (tl2.at - tl.at) as work_duration
+from task_logs tl
+join task_logs tl2 on tl2.task_id = tl.task_id and tl2.status = '4' /* Done */
+join tasks t on t.id = tl.task_id
+join task_statuses ts on ts.id = t.status
+join users u on u.id = t.created_by_user_id
+join users u2 on u2.id = t.assigned_to_user_id
+where tl.status = '3' /* InProgress */
+and tl.task_id in (
+	select tl.task_id
+	from task_logs tl
+	where tl.status in ('3', '4')
+	group by tl.task_id 
+	having count(distinct tl.status) = 2
+)
+order by work_duration asc
+limit 100
 ```
 
 ## Задание 2: выборка для проверки вложенности
@@ -58,7 +82,24 @@
 
 ### Решение
 ```sql
-/* ЗДЕСЬ ДОЛЖНО БЫТЬ РЕШЕНИЕ */
+with recursive tasks_tree
+  as (select t.id as task_id
+           , t.parent_task_id as parent_task_id
+           , 1 as level
+           , '//' || t.id::text as path
+      from tasks t
+      where t.id = :parent_task_id
+      union all
+      select t.id as task_id
+           , t.parent_task_id as parent_task_id
+           , tt.level + 1 as level
+           , '//' || t.id::text || tt.path
+      from tasks t
+      join tasks_tree tt on tt.parent_task_id = t.id)
+select tt.level, tt. path
+from tasks_tree tt
+order by level desc
+limit 1
 ```
 
 ## Задание 3: самые активные пользователи
@@ -75,7 +116,35 @@
 
 ### Решение
 ```sql
-/* ЗДЕСЬ ДОЛЖНО БЫТЬ РЕШЕНИЕ */
+select res.id as user_id
+     , u2.email as email
+     , sum(res.count_active) AS total_events
+from (
+	select u.id as id
+       , count(*) as count_active
+	from tasks t 
+	join users u on u.id = t.created_by_user_id
+	where u.blocked_at is null
+	group by u.id
+	union all
+	select u.id as id
+	     , count(*) as count_active
+	from task_logs tl 
+	join users u on u.id = tl.user_id
+	where u.blocked_at is not null
+	group by u.id
+	union all
+	select u.id as id
+       , count(*) as count_active
+	from task_comments tc 
+	join users u on u.id = tc.author_user_id
+	where u.blocked_at is not null
+	group by u.id
+) as res
+join users u2 on u2.id = res.id
+group by res.id, u2.email 
+order by total_events desc, res.id asc
+limit 100
 ```
 
 ## Дополнительное задание: получить переписку по заданию в формате "вопрос-ответ"
@@ -120,7 +189,74 @@
 
 ### Решение
 ```sql
-/* ЗДЕСЬ ДОЛЖНО БЫТЬ РЕШЕНИЕ */
+with recent_tasks as (
+    select id, number, created_by_user_id, assigned_to_user_id
+    from tasks
+    order by created_at desc
+    limit 5
+),
+comments as (
+    select 
+        tc.task_id,
+        tc.author_user_id,
+        u.email as author_email,
+        tc.message,
+        tc.at,
+        t.created_by_user_id as task_author_id,
+        t.assigned_to_user_id as task_assignee_id,
+        au.email as task_author_email,
+        asu.email as task_assignee_email,
+        case when tc.author_user_id = t.created_by_user_id then 'question' end as is_question,
+        case when tc.author_user_id = t.assigned_to_user_id then 'answer' end as is_answer
+    from task_comments tc
+    join recent_tasks t on tc.task_id = t.id
+    join users u on tc.author_user_id = u.id
+    join users au on t.created_by_user_id = au.id
+    join users asu on t.assigned_to_user_id = asu.id
+    where tc.author_user_id in (t.created_by_user_id, t.assigned_to_user_id)
+),
+matched_comments as (
+    select 
+        task_id,
+        task_author_email as author_email,
+        task_assignee_email as assignee_email,
+        message as question,
+        at as asked_at,
+        lag(message) over (
+            partition by task_id order by at
+        ) as potential_answer,
+        lag(at) over (
+            partition by task_id order by at
+        ) as potential_answered_at
+    from comments
+    where is_question = 'question'
+),
+result as (
+    select 
+        m.task_id,
+        m.author_email,
+        m.assignee_email,
+        m.question,
+        m.asked_at,
+        case when c.is_answer = 'answer' then m.potential_answer end as answer,
+        case when c.is_answer = 'answer' then m.potential_answered_at end as answered_at
+    from matched_comments m
+    left join comments c 
+        on m.task_id = c.task_id 
+        and c.message = m.potential_answer 
+        and c.at = m.potential_answered_at
+)
+select 
+    rt.number as task_number,
+    fm.author_email,  
+    fm.assignee_email,
+    fm.question,
+    fm.answer,
+    fm.asked_at,
+    fm.answered_at
+from recent_tasks rt
+left join result fm on rt.id = fm.task_id
+order by rt.number, coalesce(fm.asked_at, now())
 ```
 ### Дедлайны сдачи и проверки задания:
 - 22 марта 23:59 (сдача) / 25 марта, 23:59 (проверка)
