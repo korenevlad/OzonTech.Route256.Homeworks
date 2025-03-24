@@ -55,7 +55,8 @@ join tasks t on t.id = tl.task_id
 join task_statuses ts on ts.id = t.status
 join users u on u.id = t.created_by_user_id
 join users u2 on u2.id = t.assigned_to_user_id
-where tl.status = '3' /* InProgress */
+where t.status != '5'
+and tl.status = '3' /* InProgress */
 and tl.task_id in (
      select tl.task_id
      from task_logs tl
