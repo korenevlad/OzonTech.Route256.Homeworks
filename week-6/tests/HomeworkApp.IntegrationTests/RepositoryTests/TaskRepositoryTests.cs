@@ -1,12 +1,16 @@
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
+using HomeworkApp.Dal.Entities;
 using HomeworkApp.Dal.Models;
 using HomeworkApp.Dal.Repositories.Interfaces;
 using HomeworkApp.IntegrationTests.Creators;
 using HomeworkApp.IntegrationTests.Fakers;
 using HomeworkApp.IntegrationTests.Fixtures;
 using Xunit;
+using TaskStatus = HomeworkApp.Dal.Models.TaskStatus;
 
 namespace HomeworkApp.IntegrationTests.RepositoryTests;
 
@@ -90,5 +94,46 @@ public class TaskRepositoryTests
 
         expectedTask = expectedTask with {Status = assign.Status};
         task.Should().BeEquivalentTo(expectedTask);
+    }
+
+    [Fact]
+    public async Task GetSubTasksInStatus_Success()
+    {
+        // Arrange
+        const int depth = 5;
+        var targetStatuses = new TaskStatus[] { TaskStatus.InProgress, TaskStatus.Done };
+        var countTasks = depth;
+        long parentTaskId = default;
+        var generatedTasksWithoutFirstTask = new List<TaskEntityV1>();
+        long firstTaskId = default;
+        while (countTasks > 0)
+        {
+            TaskEntityV1 generatedTask;
+            switch (countTasks)
+            {
+                case depth:
+                    generatedTask = TaskEntityV1Faker.Generate().First();
+                    var createdTaskId = await _repository.Add(new TaskEntityV1[]{ generatedTask }, default);
+                    firstTaskId = createdTaskId[0];
+                    parentTaskId = createdTaskId[0];
+                    break;
+                case var _:
+                    generatedTask = TaskEntityV1Faker.Generate().First().WithParentTaskId(parentTaskId);
+                    generatedTasksWithoutFirstTask.Add(generatedTask);
+                    createdTaskId = await _repository.Add(new TaskEntityV1[]{ generatedTask }, default);
+                    parentTaskId = createdTaskId[0];
+                    break;
+            }
+            countTasks--;
+        }
+        var tasksWithTargetStatuses = generatedTasksWithoutFirstTask
+            .Where(t => targetStatuses.Contains((TaskStatus)t.Status)).ToArray();
+        
+        // Act
+        var realTasksInStatuses = await _repository.GetSubTasksInStatus(firstTaskId, targetStatuses, default);
+        
+        // Asserts
+        Assert.Equal(tasksWithTargetStatuses.Length, realTasksInStatuses.Length);
+        Assert.All(realTasksInStatuses, task => Assert.Contains((TaskStatus)task.Status, targetStatuses));
     }
 }
