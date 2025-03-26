@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.Linq;
 using AutoBogus;
 using Bogus;
 using HomeworkApp.Dal.Entities;
@@ -26,7 +28,19 @@ public static class TaskEntityV1Faker
                 : Faker.Generate(count).ToArray();
         }
     }
-
+    
+    public static List<TaskEntityV1> GenerateTaskHierarchy(int depth, List<TaskEntityV1> tasks, long? parentTaskId = null)
+    {
+        if (depth <= 0)
+            return tasks;
+        var task = TaskEntityV1Faker.Generate().First()
+            .WithParentTaskId(parentTaskId ?? default)
+            .WithId(Create.RandomId());
+        tasks.Add(task);
+        var childTasks = GenerateTaskHierarchy(depth - 1,tasks, task.Id);
+        return tasks;
+    }
+    
     public static TaskEntityV1 WithCreatedByUserId(
         this TaskEntityV1 src, 
         long userId)

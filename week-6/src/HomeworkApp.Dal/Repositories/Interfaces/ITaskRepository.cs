@@ -2,6 +2,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using HomeworkApp.Dal.Entities;
 using HomeworkApp.Dal.Models;
+using TaskStatus = HomeworkApp.Dal.Models.TaskStatus;
 
 namespace HomeworkApp.Dal.Repositories.Interfaces;
 

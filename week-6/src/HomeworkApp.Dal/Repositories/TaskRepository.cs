@@ -132,7 +132,7 @@ where res.status = any(@Statuses)
                 new
                 {
                     ParentTaskId = parentTaskId,
-                    Statuses = statuses
+                    Statuses = statuses.Select(s => (int)s).ToArray()
                 },
                 cancellationToken: token
             ));
