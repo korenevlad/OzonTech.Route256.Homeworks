@@ -8,6 +8,7 @@ using HomeworkApp.Dal.Models;
 using HomeworkApp.Dal.Repositories.Interfaces;
 using HomeworkApp.Dal.Settings;
 using Microsoft.Extensions.Options;
+using TaskStatus = HomeworkApp.Dal.Models.TaskStatus;
 
 namespace HomeworkApp.Dal.Repositories;
 
@@ -97,5 +98,44 @@ update tasks
                     Status = model.Status
                 },
                 cancellationToken: token));
+    }
+
+    public async Task<SubTaskModel[]> GetSubTasksInStatus(long parentTaskId, TaskStatus[] statuses, CancellationToken token)
+    {
+        const string sqlQuery = @"
+with recursive tasks_tree
+  as (select t.id as task_id
+           , t.title as title
+           , t.status as status
+           , array[t.id] as parent_task_ids
+      from tasks t
+      where t.id = @ParentTaskId
+      union all
+      select t.id as task_id
+           , t.title as title
+           , t.status as status
+           , tt.parent_task_ids || t.id as parent_task_ids
+       from tasks t
+       join tasks_tree tt on t.parent_task_id = tt.task_id)
+select *
+from (
+       select *
+       from tasks_tree tt
+       offset 1
+) res
+where res.status = any(@Statuses)
+";
+        await using var connection = await GetConnection();
+        var subTaskModel = await connection.QueryAsync<SubTaskModel>(
+            new CommandDefinition(
+                sqlQuery,
+                new
+                {
+                    ParentTaskId = parentTaskId,
+                    Statuses = statuses
+                },
+                cancellationToken: token
+            ));
+        return subTaskModel.ToArray();
     }
 }
