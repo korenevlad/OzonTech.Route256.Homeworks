@@ -210,7 +210,7 @@ public class TaskService : ITaskService
             taskJson,
             new DistributedCacheEntryOptions
             {
-                AbsoluteExpirationRelativeToNow = TimeSpan.FromHours(1)
+                AbsoluteExpirationRelativeToNow = TimeSpan.FromSeconds(5)
             },
             token);
         return result;
