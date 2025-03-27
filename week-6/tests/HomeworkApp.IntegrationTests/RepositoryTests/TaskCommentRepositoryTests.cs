@@ -36,7 +36,6 @@ public class TaskCommentRepositoryTests
         id.Should().BeGreaterThan(0);
     }
     
-    // Get
     [Fact]
     public async Task Get_WithoutDeleted_Success()
     {
@@ -71,11 +70,44 @@ public class TaskCommentRepositoryTests
 
         //Asserts
         taskCommentsWithoutDeleted.Should().HaveCount(filteredTaskComments.Count);
-        for (var i = 0; i < taskCommentsWithoutDeleted.Length; i++)
+        taskCommentsWithoutDeleted.Should().BeEquivalentTo(filteredTaskComments, options => 
+            options.Excluding(x => x.Id));
+    }
+    
+    [Fact]
+    public async Task Get_IncludeDeleted_Success()
+    {
+        //Arrange
+        var countTaskCommentsGroupByTaskId = new int[] { 1, 2, 3, 4, 5 };
+        var random = new Random();
+        var randomTaskIds = Enumerable.Range(0, 5)
+            .Select(_ => random.Next(1, 101)) 
+            .ToArray();
+        var allTaskComments = new List<TaskCommentEntityV1>();
+        for (var i = 0; i < countTaskCommentsGroupByTaskId.Length; i++)
         {
-            taskCommentsWithoutDeleted[i].TaskId.Should().Be(filteredTaskComments[i].TaskId);
-            taskCommentsWithoutDeleted[i].DeletedAt.Should().Be(filteredTaskComments[i].DeletedAt);
+            allTaskComments.AddRange(TaskCommentEntityV1Faker.Generate(countTaskCommentsGroupByTaskId[i])
+                .Select(comment => comment.WithTaskId(randomTaskIds[i]).WithRandomExistedDeletedAt()));
         }
+        foreach (var taskComment in allTaskComments)
+        {
+            await _repository.Add(taskComment, default);
+        }
+        var taskCommentGetModel = new TaskCommentGetModel()
+        {
+            TaskId = randomTaskIds[random.Next(randomTaskIds.Length)],
+            IncludeDeleted = true
+        };
+        var filteredTaskComments = allTaskComments
+            .Where(tc => tc.TaskId == taskCommentGetModel.TaskId)
+            .ToList();
+        
+        //Act
+        var taskCommentsWithoutDeleted = await _repository.Get(taskCommentGetModel, default);
+
+        //Asserts
+        taskCommentsWithoutDeleted.Should().BeEquivalentTo(filteredTaskComments, options => 
+            options.Excluding(x => x.Id));
     }
     
 
@@ -85,16 +117,42 @@ public class TaskCommentRepositoryTests
         //Arrange
         var taskComment = TaskCommentEntityV1Faker.Generate().First();
         var id = await _repository.Add(taskComment, default);
-        var createdTaskComment = TaskCommentEntityV1Faker.Generate().First().WithId(id).WithModifiedAt();
+        var generatedTaskCommentForUpdate = TaskCommentEntityV1Faker.Generate().First().WithId(id).WithModifiedAt();
         
         //Act
-        await _repository.Update(createdTaskComment, default);
+        await _repository.Update(generatedTaskCommentForUpdate, default);
+        
+        var taskCommentGetModel = new TaskCommentGetModel()
+        {
+            TaskId = generatedTaskCommentForUpdate.TaskId,
+            IncludeDeleted = true
+        };
+       var taskComments =  await _repository.Get(taskCommentGetModel, default);
+       var updatedTaskComment = taskComments.Where(x => x.Id == id).First();
         
         //Asserts
-        // TODO: НАПИСАТЬ ЧЕРЕЗ GET
+        updatedTaskComment.Should().BeEquivalentTo(generatedTaskCommentForUpdate);
     }
-    
-    // Delete
-    
-    
+
+    [Fact]
+    public async Task SetDeleted_taskCommentId_Sucess()
+    {
+        //Arrange
+        var taskComment = TaskCommentEntityV1Faker.Generate().First();
+        var id = await _repository.Add(taskComment, default);
+        
+        //Act
+        _repository.SetDeleted(id, default);
+        var taskCommentGetModel = new TaskCommentGetModel()
+        {
+            TaskId = taskComment.TaskId,
+            IncludeDeleted = true
+        };
+        var taskComments =  await _repository.Get(taskCommentGetModel, default);
+        var taskCommentWithSetDeleted = taskComments.Where(x => x.Id == id).First();
+        
+        //Asserts
+        taskCommentWithSetDeleted.Id.Should().Be(id);
+        taskCommentWithSetDeleted.DeletedAt.Should().NotBeNull();
+    }
 }

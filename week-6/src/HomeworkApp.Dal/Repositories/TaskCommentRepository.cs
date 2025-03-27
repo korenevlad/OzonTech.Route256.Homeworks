@@ -47,6 +47,7 @@ update task_comments
 set task_id = @TaskId,
     author_user_id = @AuthorUserId,
     message = @Message,
+    at = @At,
     modified_at = @ModifiedAt
 where id = @Id
 ";
@@ -60,14 +61,28 @@ where id = @Id
                     TaskId = model.TaskId,
                     AuthorUserId =  model.AuthorUserId,
                     Message = model.Message,
+                    At = model.At,
                     ModifiedAt = model.ModifiedAt
                 },
                 cancellationToken: token));
     }
 
-    public Task SetDeleted(long taskCommentId, CancellationToken token)
+    public async Task SetDeleted(long taskCommentId, CancellationToken token)
     {
-        throw new System.NotImplementedException();
+        const string sqlQuery = @"
+update task_comments
+set deleted_at = current_timestamp
+where id = @Id
+";
+        await using var connection = await GetConnection();
+        var id = await connection.ExecuteAsync(
+            new CommandDefinition(
+                sqlQuery,
+                new
+                {
+                    Id = taskCommentId
+                },
+                cancellationToken: token));
     }
 
     public async Task<TaskCommentEntityV1[]> Get(TaskCommentGetModel model, CancellationToken token)
