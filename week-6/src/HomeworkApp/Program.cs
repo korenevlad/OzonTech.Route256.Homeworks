@@ -29,6 +29,8 @@ services
     .AddDalInfrastructure(builder.Configuration)
     .AddDalRepositories();
 
+services.AddGrpc();
+
 services.AddStackExchangeRedisCache(options =>
 {
     options.Configuration = builder.Configuration["DalOptions:RedisConnectionString"];
