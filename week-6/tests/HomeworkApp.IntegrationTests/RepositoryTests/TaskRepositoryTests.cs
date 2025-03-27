@@ -97,7 +97,7 @@ public class TaskRepositoryTests
     }
 
     [Fact]
-    public async Task GetSubTasksInStatus_Success()
+    public async Task GetSubTasksInStatus_TaskId_Success()
     {
         // Arrange
         const int depth = 5;

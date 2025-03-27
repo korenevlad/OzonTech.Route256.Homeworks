@@ -5,7 +5,7 @@ namespace HomeworkApp.Dal.Entities;
 public record TaskEntityV1
 {
     public long Id { get; init; }
-
+    
     public long? ParentTaskId { get; init; }
 
     public required string Number { get; init; }
