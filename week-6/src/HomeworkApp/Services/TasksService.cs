@@ -1,3 +1,4 @@
+using System.Linq;
 using System.Threading.Tasks;
 using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
@@ -60,5 +61,22 @@ public class TasksService :  WorkshopApp.Proto.Client.TasksService.TasksServiceB
         }, context.CancellationToken);
 
         return new Empty();
+    }
+
+    public override async Task<V1GetTaskCommentsResponse> V1GetTaskComments(V1GetTaskCommentsRequest request, ServerCallContext context)
+    {
+        var taskMessages = await _taskService.GetComments(request.TaskId, context.CancellationToken);
+        var response = new V1GetTaskCommentsResponse();
+        foreach (var taskMessage in taskMessages)
+        {
+            response.Comments.Add(new V1GetTaskCommentsResponse.Types.GetCommentsModel()
+            {
+                TaskId = taskMessage.TaskId,
+                Message = taskMessage.Comment,
+                IsDeleted = taskMessage.IsDeleted,
+                At = Timestamp.FromDateTimeOffset(taskMessage.At)
+            });
+        }
+        return response;
     }
 }

@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Transactions;
 using HomeworkApp.Bll.Models;
+using HomeworkApp.Bll.Models.Mappers;
 using HomeworkApp.Bll.Services.Interfaces;
 using HomeworkApp.Dal.Entities;
 using HomeworkApp.Dal.Models;
@@ -22,17 +23,20 @@ public class TaskService : ITaskService
     private readonly ITaskLogRepository _taskLogRepository;
     private readonly ITakenTaskRepository _takenTaskRepository;
     private readonly IDistributedCache _distributedCache;
+    private readonly ITaskCommentRepository _taskCommentRepository;
 
     public TaskService(
         ITaskRepository taskRepository,
         ITaskLogRepository taskLogRepository,
         ITakenTaskRepository takenTaskRepository,
-        IDistributedCache distributedCache)
+        IDistributedCache distributedCache,
+        ITaskCommentRepository taskCommentRepository)
     {
         _taskRepository = taskRepository;
         _taskLogRepository = taskLogRepository;
         _takenTaskRepository = takenTaskRepository;
         _distributedCache = distributedCache;
+        _taskCommentRepository = taskCommentRepository;
     }
 
     public async Task<long> CreateTask(
@@ -175,6 +179,41 @@ public class TaskService : ITaskService
         }, token);
 
         transaction.Complete();
+    }
+
+    public async Task<TaskMessage[]> GetComments(long taskId, CancellationToken token)
+    {
+        var cacheKey = $"cache_taskComments:{taskId}";
+        var cachedTask = await _distributedCache.GetStringAsync(cacheKey, token);
+        if (!string.IsNullOrEmpty(cachedTask))
+        {
+            return JsonSerializer.Deserialize<TaskMessage[]>(cachedTask);
+        }
+
+        var requestModel = new TaskCommentGetModel
+        {
+            TaskId = taskId,
+            IncludeDeleted = true
+        };
+        var taskComments = await _taskCommentRepository.Get(requestModel, token);
+
+        var result = taskComments
+            .OrderByDescending(x => x.At)
+            .Take(5)
+            .Select(x => x.ToTaskMessage())
+            .ToArray();
+
+        var taskJson = JsonSerializer.Serialize(result);
+
+        await _distributedCache.SetStringAsync(
+            cacheKey,
+            taskJson,
+            new DistributedCacheEntryOptions
+            {
+                AbsoluteExpirationRelativeToNow = TimeSpan.FromHours(1)
+            },
+            token);
+        return result;
     }
 
     private TransactionScope CreateTransactionScope(
