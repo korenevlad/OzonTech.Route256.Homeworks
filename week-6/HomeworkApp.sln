@@ -16,8 +16,8 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "common", "common", "{2E9AA310-F44C-41F0-8E99-8066559397E4}"
 	ProjectSection(SolutionItems) = preProject
 		docker-compose.yaml = docker-compose.yaml
-        Directory.Build.props = Directory.Build.props
-	    Directory.Packages.props = Directory.Packages.props
+								Directory.Build.props = Directory.Build.props
+					Directory.Packages.props = Directory.Packages.props
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HomeworkApp.IntegrationTests", "tests\HomeworkApp.IntegrationTests\HomeworkApp.IntegrationTests.csproj", "{AF2374C9-1701-447A-92DC-24FE1247303B}"
@@ -28,6 +28,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "doc", "doc", "{0348D67D-DE8
 	ProjectSection(SolutionItems) = preProject
 		README.md = README.md
 	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HomeworkApp.UnitTests", "tests\HomeworkApp.UnitTests\HomeworkApp.UnitTests.csproj", "{24E7DB6E-4E70-4179-A8E6-40D0E12E6211}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -58,6 +60,10 @@ Global
 		{03452615-FCB4-42C6-9EBF-48CFE58184E4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{03452615-FCB4-42C6-9EBF-48CFE58184E4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{03452615-FCB4-42C6-9EBF-48CFE58184E4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{24E7DB6E-4E70-4179-A8E6-40D0E12E6211}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{24E7DB6E-4E70-4179-A8E6-40D0E12E6211}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{24E7DB6E-4E70-4179-A8E6-40D0E12E6211}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{24E7DB6E-4E70-4179-A8E6-40D0E12E6211}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{3DBECF9F-F9B1-451F-8DB3-FEEF7F3A41F6} = {F713B26E-84BA-40F3-822F-28F66CB87C66}
@@ -65,5 +71,6 @@ Global
 		{5E796A80-C122-43D9-876E-9FFCCD37A6FE} = {F713B26E-84BA-40F3-822F-28F66CB87C66}
 		{AF2374C9-1701-447A-92DC-24FE1247303B} = {FA1F6E3C-0C90-4F1F-BA9E-991D9EA7B831}
 		{03452615-FCB4-42C6-9EBF-48CFE58184E4} = {F713B26E-84BA-40F3-822F-28F66CB87C66}
+		{24E7DB6E-4E70-4179-A8E6-40D0E12E6211} = {FA1F6E3C-0C90-4F1F-BA9E-991D9EA7B831}
 	EndGlobalSection
 EndGlobal
