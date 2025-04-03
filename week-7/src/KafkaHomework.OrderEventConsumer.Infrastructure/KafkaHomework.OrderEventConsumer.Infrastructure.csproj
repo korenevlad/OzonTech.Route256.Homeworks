@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup>
+    <ProjectReference Include="..\KafkaHomework.OrderEventConsumer.Domain\KafkaHomework.OrderEventConsumer.Domain.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Confluent.Kafka" />
+    <PackageReference Include="Npgsql" />
+    <PackageReference Include="FluentMigrator.Runner" />
+    <PackageReference Include="FluentMigrator.Runner.Postgres" />
+    <PackageReference Include="Microsoft.Extensions.Options" />
+  </ItemGroup>
+</Project>
