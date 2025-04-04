@@ -5,6 +5,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using KafkaHomework.OrderEventConsumer.Infrastructure;
 using KafkaHomework.OrderEventConsumer.Infrastructure.Common;
+using KafkaHomework.OrderEventConsumer.Presentation.BLL;
+using KafkaHomework.OrderEventConsumer.Presentation.Kafka;
 
 namespace KafkaHomework.OrderEventConsumer.Presentation;
 

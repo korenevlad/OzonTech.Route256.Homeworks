@@ -14,4 +14,8 @@
     <ProjectReference Include="..\KafkaHomework.OrderEventConsumer.Infrastructure\KafkaHomework.OrderEventConsumer.Infrastructure.csproj" />
   </ItemGroup>
 
+
+
+
+
 </Project>

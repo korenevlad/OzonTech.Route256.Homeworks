@@ -1,17 +1,21 @@
 ﻿using System;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
 using Confluent.Kafka;
+using KafkaHomework.OrderEventConsumer.Infrastructure.Kafka;
+using KafkaHomework.OrderEventConsumer.Presentation.BLL;
+using KafkaHomework.OrderEventConsumer.Presentation.Contracts;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using KafkaHomework.OrderEventConsumer.Infrastructure.Kafka;
 
-namespace KafkaHomework.OrderEventConsumer.Presentation;
+namespace KafkaHomework.OrderEventConsumer.Presentation.Kafka;
 
 public class KafkaBackgroundService : BackgroundService
 {
-    private readonly KafkaAsyncConsumer<Ignore, string> _consumer;
+    private readonly KafkaAsyncConsumer<long, OrderEvent> _consumer;
     private readonly ILogger<KafkaBackgroundService> _logger;
 
     public KafkaBackgroundService(IServiceProvider serviceProvider, ILogger<KafkaBackgroundService> logger)
@@ -20,14 +24,20 @@ public class KafkaBackgroundService : BackgroundService
         // TODO: KafkaServiceExtensions: services.AddKafkaHandler<TKey, TValue, THandler<TKey, TValue>>(serializers, topic, groupId);
         _logger = logger;
         var handler = serviceProvider.GetRequiredService<ItemHandler>();
-        _consumer = new KafkaAsyncConsumer<Ignore, string>(
+        _consumer = new KafkaAsyncConsumer<long, OrderEvent>(
             handler,
             "kafka:9092",
             "group_id",
             "order_events",
-            null,
-            null,
-            serviceProvider.GetRequiredService<ILogger<KafkaAsyncConsumer<Ignore, string>>>());
+            new SystemTextJsonSerializer<long>(new JsonSerializerOptions
+            {
+                Converters = { new JsonStringEnumConverter() }
+            }),
+            new SystemTextJsonSerializer<OrderEvent>(new JsonSerializerOptions
+            {
+                Converters = { new JsonStringEnumConverter() }
+            }),
+            serviceProvider.GetRequiredService<ILogger<KafkaAsyncConsumer<long, OrderEvent>>>());
     }
 
     public override Task StopAsync(CancellationToken cancellationToken)
