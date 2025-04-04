@@ -11,7 +11,7 @@ namespace KafkaHomework.OrderEventConsumer.Infrastructure.Kafka;
 
 public sealed class KafkaAsyncConsumer<TKey, TValue> : IDisposable
 {
-    private const int ChannelCapacity = 10; // TODO: IOptions
+    private const int ChannelCapacity = 1000; // TODO: IOptions
     private readonly TimeSpan _bufferDelay = TimeSpan.FromSeconds(1); // TODO: IOptions
 
     private readonly Channel<ConsumeResult<TKey, TValue>> _channel;
