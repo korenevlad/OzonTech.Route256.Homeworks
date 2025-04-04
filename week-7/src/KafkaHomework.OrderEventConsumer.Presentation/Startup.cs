@@ -7,6 +7,7 @@ using KafkaHomework.OrderEventConsumer.Infrastructure;
 using KafkaHomework.OrderEventConsumer.Infrastructure.Common;
 using KafkaHomework.OrderEventConsumer.Presentation.BLL;
 using KafkaHomework.OrderEventConsumer.Presentation.Kafka;
+using Microsoft.Extensions.Logging;
 
 namespace KafkaHomework.OrderEventConsumer.Presentation;
 
@@ -27,7 +28,11 @@ public sealed class Startup
                 connectionString,
                 typeof(SqlMigration).Assembly);
 
-        services.AddSingleton<IItemRepository, ItemRepository>(_ => new ItemRepository(connectionString));
+        services.AddSingleton<IItemRepository>(serviceProvider =>
+        {
+            var logger = serviceProvider.GetRequiredService<ILogger<ItemRepository>>();
+            return new ItemRepository(connectionString, logger);
+        });
         services.AddSingleton<ItemHandler>();
         services.AddHostedService<KafkaBackgroundService>();
     }

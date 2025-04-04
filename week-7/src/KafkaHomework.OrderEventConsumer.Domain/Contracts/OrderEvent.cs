@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Text.Json.Serialization;
 
-namespace KafkaHomework.OrderEventConsumer.Presentation.Contracts;
+namespace KafkaHomework.OrderEventConsumer.Domain.Contracts;
 public sealed class OrderEvent
 {
     [JsonPropertyName("order_id")]
