@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using KafkaHomework.OrderEventConsumer.Domain;
 using Microsoft.Extensions.Logging;
 using Dapper;
+using KafkaHomework.OrderEventConsumer.Domain.Repositories;
 using OrderEvent = KafkaHomework.OrderEventConsumer.Domain.Contracts.OrderEvent;
 
 namespace KafkaHomework.OrderEventConsumer.Infrastructure.Repositories;
@@ -18,27 +19,30 @@ public sealed class ItemRepository : PgRepository, IItemRepository
         _logger = logger;
     }
     
-    public async Task UpdateItemStatisticsAsync(long itemId, int quantity, Domain.Contracts.OrderEvent.OrderStatus status, CancellationToken token)
+    public async Task UpdateItemStatisticsAsync(long itemId, int quantity, Domain.Contracts.OrderEvent.OrderStatus status, DateTime last_updated, CancellationToken token)
     {
         var query = status switch
         {
             Domain.Contracts.OrderEvent.OrderStatus.Created => 
-                @"insert into product_items (item_id, reserved_count, sold_count, cancelled_count, last_updated) " + 
-                "values (@itemId, @quantity, 0, 0, now()) " + 
-                "on conflict (item_id) DO " + 
-                "update set reserved_count = product_items.reserved_count + @quantity, last_updated = now();",
+                @"insert into product_items (item_id, reserved_count, sold_count, cancelled_count, last_updated) 
+values (@itemId, @quantity, 0, 0, @last_updated) 
+on conflict (item_id) DO 
+update set reserved_count = product_items.reserved_count + @quantity
+         , last_updated = @last_updated;",
 
             Domain.Contracts.OrderEvent.OrderStatus.Delivered => 
-                @"update product_items " +
-                "set sold_count = sold_count + @quantity, " + 
-                "last_updated = now() " +  
-                "where item_id = @itemId;", 
+                @"update product_items 
+set sold_count = sold_count + @quantity
+  , reserved_count = reserved_count - @quantity 
+  , last_updated = @last_updated 
+where item_id = @itemId;",
 
-            OrderEvent.OrderStatus.Canceled => 
-                @"update product_items " +
-                "set cancelled_count = cancelled_count + @quantity, " +  
-                "last_updated = now() " +  
-                "where item_id = @itemId;",
+            Domain.Contracts.OrderEvent.OrderStatus.Canceled => 
+                @"update product_items 
+set cancelled_count = cancelled_count + @quantity 
+  , reserved_count = reserved_count - @quantity 
+  , last_updated = @last_updated 
+where item_id = @itemId;",
 
             _ => throw new ArgumentException($"Unknown status: {status}")
         };
@@ -50,7 +54,8 @@ public sealed class ItemRepository : PgRepository, IItemRepository
                 new
                 {
                     itemId = itemId,
-                    quantity = quantity
+                    quantity = quantity,
+                    last_updated = last_updated
                 },
                 cancellationToken: token
                 ));

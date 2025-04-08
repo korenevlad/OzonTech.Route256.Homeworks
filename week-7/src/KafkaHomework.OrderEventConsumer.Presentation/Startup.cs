@@ -1,4 +1,5 @@
 ﻿using KafkaHomework.OrderEventConsumer.Domain;
+using KafkaHomework.OrderEventConsumer.Domain.Repositories;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -33,6 +34,12 @@ public sealed class Startup
             {
                 var logger = serviceProvider.GetRequiredService<ILogger<ItemRepository>>();
                 return new ItemRepository(connectionString, logger);
+            } 
+        );
+        services.AddScoped<IProductSalesRepository, ProductSalesRepository>(serviceProvider => 
+            {
+                var logger = serviceProvider.GetRequiredService<ILogger<ProductSalesRepository>>();
+                return new ProductSalesRepository(connectionString, logger);
             } 
         );
         services.AddSingleton<KafkaHandler>();
