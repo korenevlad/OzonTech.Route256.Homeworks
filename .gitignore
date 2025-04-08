@@ -34,13 +34,6 @@ packages/
 secrets.json
 launchSettings.json
 
-Migrations/
-*.mdf
-*.ldf
-*.sqlite
-*.db
-*.bak
-
 .idea/
 *.iml
 *.sln.DotSettings.user
