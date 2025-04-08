@@ -14,10 +14,18 @@ public abstract class SqlMigration : IMigration
 
         context.Expressions.Add(new ExecuteSqlStatementExpression { SqlStatement = GetUpSql(context.ServiceProvider) });
     }
-
-    public void GetDownExpressions(IMigrationContext context) => throw new NotSupportedException();
-
+    
+    public void GetDownExpressions(IMigrationContext context)
+    {
+        _ = context ?? throw new ArgumentException(nameof(context));
+        context.Expressions.Add(new ExecuteSqlStatementExpression()
+        {
+            SqlStatement = GetDownSql(context.ServiceProvider)
+        });
+    }
+    
     protected abstract string GetUpSql(IServiceProvider services);
+    protected abstract string GetDownSql(IServiceProvider services);
 
     object IMigration.ApplicationContext => throw new NotSupportedException();
     string IMigration.ConnectionString => throw new NotSupportedException();

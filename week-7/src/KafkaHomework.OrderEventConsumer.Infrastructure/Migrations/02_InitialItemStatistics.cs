@@ -15,4 +15,9 @@ create table product_items (
                     last_updated timestamp with time zone not null
                 );
 ";
+    
+    protected override string GetDownSql(IServiceProvider services) =>
+        """
+        drop table if exists product_items;
+        """;
 }

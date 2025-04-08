@@ -23,7 +23,7 @@ public class KafkaBackgroundService : BackgroundService
         // TODO: IOptions
         // TODO: KafkaServiceExtensions: services.AddKafkaHandler<TKey, TValue, THandler<TKey, TValue>>(serializers, topic, groupId);
         _logger = logger;
-        var handler = serviceProvider.GetRequiredService<ItemHandler>();
+        var handler = serviceProvider.GetRequiredService<KafkaHandler>();
         _consumer = new KafkaAsyncConsumer<long, OrderEvent>(
             handler,
             "kafka:9092",

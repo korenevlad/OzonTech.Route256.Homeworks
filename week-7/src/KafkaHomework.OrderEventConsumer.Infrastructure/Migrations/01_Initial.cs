@@ -45,4 +45,11 @@ create table seller_inventory
         unique (seller_id, good_id, currency)
 );
 ";
+
+    protected override string GetDownSql(IServiceProvider services) =>
+        """
+        drop table if exists order_items;
+        drop table if exists inventory;
+        drop table if exists seller_inventory;
+        """;
 }
