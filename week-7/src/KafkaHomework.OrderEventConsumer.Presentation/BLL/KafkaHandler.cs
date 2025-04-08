@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Confluent.Kafka;
 using KafkaHomework.OrderEventConsumer.Domain;
 using KafkaHomework.OrderEventConsumer.Domain.Contracts;
+using KafkaHomework.OrderEventConsumer.Domain.Repositories;
 using KafkaHomework.OrderEventConsumer.Infrastructure;
 using KafkaHomework.OrderEventConsumer.Infrastructure.Kafka;
 using Microsoft.Extensions.Logging;
@@ -14,15 +15,16 @@ using Microsoft.Extensions.Logging;
 namespace KafkaHomework.OrderEventConsumer.Presentation.BLL;
 public class KafkaHandler : IHandler<long, OrderEvent>
 {
+    private readonly IItemRepository _itemRepository;
+    private readonly IProductSalesRepository _productSalesRepository;
     private readonly ILogger<KafkaHandler> _logger;
-    private readonly Random _random = new();
-    private readonly IItemRepository _repository;
     private const int maxDegreeOfParallelism = 5;
 
-    public KafkaHandler(ILogger<KafkaHandler> logger, IItemRepository repository)
+    public KafkaHandler(IItemRepository itemRepository, IProductSalesRepository productSalesRepository, ILogger<KafkaHandler> logger)
     {
+        _itemRepository = itemRepository;
+        _productSalesRepository = productSalesRepository;
         _logger = logger;
-        _repository = repository;
     }
     
     public async Task Handle(IReadOnlyCollection<ConsumeResult<long, OrderEvent>> messages, CancellationToken token)
@@ -38,8 +40,16 @@ public class KafkaHandler : IHandler<long, OrderEvent>
                     await semaphore.WaitAsync(token);
                     try
                     {
-                        await _repository.UpdateItemStatisticsAsync(position.ItemId, position.Quantity, order.Status, token);
+                        await _itemRepository.UpdateItemStatisticsAsync(position.ItemId, position.Quantity, order.Status, order.Moment, token);
                         _logger.LogInformation("Finished update for ItemId: {ItemId}", position.ItemId);
+
+                        if (order.Status is OrderEvent.OrderStatus.Delivered)
+                        {
+                            await _productSalesRepository.UpdateProductSalesAsync(
+                                position.ItemId, position.Price.Units, position.Price.Nanos
+                                , position.Price.Currency, position.Quantity, order.Moment, token);
+                            _logger.LogInformation("Finished update ProductSales for: {ItemId}", position.ItemId);
+                        }
                     }
                     finally
                     {
