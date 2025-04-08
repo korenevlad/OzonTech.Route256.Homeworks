@@ -7,7 +7,7 @@ using KafkaHomework.OrderEventGenerator.Kafka;
 
 const string bootstrapServers = "kafka:9092";
 const string topicName = "order_events";
-const int eventsCount = 100000;
+const int eventsCount = 100;
 const int timeoutMs = 5 * 60 * 1000;
 
 using var cts = new CancellationTokenSource(timeoutMs);

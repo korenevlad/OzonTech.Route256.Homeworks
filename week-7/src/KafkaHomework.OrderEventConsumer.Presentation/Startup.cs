@@ -5,6 +5,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using KafkaHomework.OrderEventConsumer.Infrastructure;
 using KafkaHomework.OrderEventConsumer.Infrastructure.Common;
+using KafkaHomework.OrderEventConsumer.Infrastructure.Repositories;
 using KafkaHomework.OrderEventConsumer.Presentation.BLL;
 using KafkaHomework.OrderEventConsumer.Presentation.Kafka;
 using Microsoft.Extensions.Logging;
@@ -27,13 +28,14 @@ public sealed class Startup
             .AddFluentMigrator(
                 connectionString,
                 typeof(SqlMigration).Assembly);
-
-        services.AddSingleton<IItemRepository>(serviceProvider =>
-        {
-            var logger = serviceProvider.GetRequiredService<ILogger<ItemRepository>>();
-            return new ItemRepository(connectionString, logger);
-        });
-        services.AddSingleton<ItemHandler>();
+        
+        services.AddScoped<IItemRepository, ItemRepository>(serviceProvider => 
+            {
+                var logger = serviceProvider.GetRequiredService<ILogger<ItemRepository>>();
+                return new ItemRepository(connectionString, logger);
+            } 
+        );
+        services.AddSingleton<KafkaHandler>();
         services.AddHostedService<KafkaBackgroundService>();
     }
 
